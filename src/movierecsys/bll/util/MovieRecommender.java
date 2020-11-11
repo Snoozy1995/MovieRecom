@@ -25,6 +25,7 @@ public class MovieRecommender
      */
     public List<Movie> highAverageRecommendations(List<Rating> allRatings, List<Rating> excludeRatings)
     {
+        //@todo parameter error handle?
         //Sorting -- remove videos already rated...
         allRatings=allRatings.stream().filter((rating)->{
             for(Rating rate:excludeRatings){
@@ -33,21 +34,17 @@ public class MovieRecommender
             return true;
         }).collect(Collectors.toList());
 
-        //Count and sort ratings..@todo
-        Map<Movie,Integer> mapOfObjects = new HashMap<Movie,Integer>();
+        //Using a hashmap and java stream -> count and sort ratings...
+        Map<Movie,Integer> mapOfObjects = new HashMap<>();
         for(Rating rate:allRatings){
-            if(mapOfObjects.get(rate.getMovie())!=null){
-                mapOfObjects.put(rate.getMovie(),mapOfObjects.get(rate.getMovie())+rate.getRating());
-            }else{
-                mapOfObjects.put(rate.getMovie(),rate.getRating());
-            }
+            mapOfObjects.merge(rate.getMovie(), rate.getRating(), Integer::sum);
         }
         Map<Movie,Integer> sortedMap=mapOfObjects.entrySet().stream()
             .sorted(Map.Entry.<Movie,Integer>comparingByValue().reversed())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                     (e1, e2) -> e1, LinkedHashMap::new));
-        System.out.println(new ArrayList<Movie>(sortedMap.keySet()).get(0).getTitle());
-        return new ArrayList<Movie>(sortedMap.keySet());
+
+        return new ArrayList<>(sortedMap.keySet());
     }
 
 

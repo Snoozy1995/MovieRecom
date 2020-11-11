@@ -5,48 +5,34 @@
  */
 package movierecsys.gui.controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import movierecsys.be.Movie;
-import movierecsys.bll.util.MovieSearcher;
-import movierecsys.dal.MovieDAO;
-import movierecsys.gui.model.MovieModel;
+import movierecsys.bll.util.MovieManager;
 
 /**
  *
- * @author pgn
+ * @author Snoozy1995
  */
 public class MovieRecController implements Initializable
 {
-
-    /**
-     * The TextField containing the URL of the targeted website.
-     */
+    public ObservableList<String> moviesList= FXCollections.observableArrayList();
+    public MovieManager movieManager=new MovieManager();
     @FXML
     private TextField txtMovieSearch;
-
-    /**
-     * The TextField containing the query word.
-     */
     @FXML
-    private ListView<Movie> lstMovies;
-
-    private MovieModel movieModel;
-
+    private ListView<String> lstMovies;
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        movieModel=new MovieModel();
-        lstMovies.setItems(movieModel.moviesList);
-        //Listener for changes in textfield
-        txtMovieSearch.textProperty().addListener((obs, oldText, newText) -> movieModel.searchInputChange(newText));
+        lstMovies.setItems(moviesList);
+        txtMovieSearch.textProperty().addListener((obs, oldText, newText) -> moviesList.setAll(movieManager.toListString(movieManager.searchMovie(newText))));
     }
 
 }

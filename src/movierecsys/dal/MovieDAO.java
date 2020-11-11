@@ -39,7 +39,7 @@ public class MovieDAO {
                     Movie mov = stringArrayToMovie(line);
                     allMovies.add(mov);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    System.out.println("Could not resolve stringline to movie, moving on to next line...\n["+line+"]");
                     //Do nothing we simply do not accept malformed lines of data.
                     //In a perfect world you should at least log the incident.
                 }

@@ -3,6 +3,7 @@ package movierecsys.bll.util;
 import movierecsys.be.Movie;
 import movierecsys.dal.MovieDAO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieManager {
@@ -10,15 +11,20 @@ public class MovieManager {
     private MovieSearcher movSearcher=new MovieSearcher();
     public List<Movie> movies=null;
 
-    void MovieManager(){
-        try {
-            movies = movDAO.getAllMovies();
-        }
-        catch(Exception e){
-
-        }
+    public MovieManager(){
+        try{ movies = movDAO.getAllMovies(); }
+        catch(Exception e){ }
     }
-    public void searchMovie(String query){
-        movSearcher.search(movies,query);
+
+    public List<Movie> searchMovie(String query){
+        return movSearcher.search(movies,query);
+    }
+
+    public List<String> toListString(List<Movie> moviesList){
+        List<String> moviesString=new ArrayList<String>();
+        for(Movie movie:moviesList){
+            moviesString.add("["+movie.getId()+"] "+movie.getTitle()+" ("+movie.getYear()+")");
+        }
+        return moviesString;
     }
 }
