@@ -39,6 +39,7 @@ public class MovieDAO {
                     Movie mov = stringArrayToMovie(line);
                     allMovies.add(mov);
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     //Do nothing we simply do not accept malformed lines of data.
                     //In a perfect world you should at least log the incident.
                 }

@@ -13,7 +13,7 @@ import movierecsys.be.Rating;
 
 /**
  *
- * @author pgn
+ * @author Snoozy1995
  */
 public class MovieRecommender
 {
@@ -48,9 +48,6 @@ public class MovieRecommender
                     (e1, e2) -> e1, LinkedHashMap::new));
         System.out.println(new ArrayList<Movie>(sortedMap.keySet()).get(0).getTitle());
         return new ArrayList<Movie>(sortedMap.keySet());
-        //System.out.println("AllRatings sum:"+allRatings.stream().mapToDouble(Rating::getRating).sum());
-        //TODO High average recommender
-        //return null;
     }
 
 
