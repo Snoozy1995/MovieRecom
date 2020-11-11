@@ -5,22 +5,27 @@
  */
 package movierecsys.dal;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import movierecsys.be.Movie;
 
 /**
- * @author pgn
+ * @author Snoozy1995
  */
 public class MovieDAO {
 
     private static final String MOVIE_SOURCE = "data/movie_titles.txt";
+    private static final Path MOVIE = ;
+    public List<Movie> moviesInMemory=null;
+
+    //todo test functions below thoroughly
+
 
     /**
      * Gets a list of all movies in the persistence storage.
@@ -45,6 +50,7 @@ public class MovieDAO {
                 }
             }
         }
+        moviesInMemory=allMovies;
         return allMovies;
     }
 
@@ -79,8 +85,17 @@ public class MovieDAO {
      * storage.
      */
     private Movie createMovie(int releaseYear, String title) {
-        //TODO Create movie.
-        return null;
+        int id=getNewID();
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
+            writer.write(id+","+releaseYear+","+title);
+            writer.close();
+        }catch(Exception e){
+            System.out.println("Problem saving to persistent storage, only saved in memory.");
+        }
+        Movie movie=new Movie(id, releaseYear, title);
+        moviesInMemory.add(movie);
+        return movie;
     }
 
     /**
@@ -89,7 +104,8 @@ public class MovieDAO {
      * @param movie The movie to delete.
      */
     private void deleteMovie(Movie movie) {
-        //TODO Delete movie
+        moviesInMemory.remove(movie);
+        saveStorage();
     }
 
     /**
@@ -99,7 +115,8 @@ public class MovieDAO {
      * @param movie The updated movie.
      */
     private void updateMovie(Movie movie) {
-        //TODO Update movies
+        //todo check if it exists in the memory or add it...
+        saveStorage();
     }
 
     /**
@@ -109,8 +126,30 @@ public class MovieDAO {
      * @return A Movie object.
      */
     private Movie getMovie(int id) {
-        //TODO Get one Movie
-        return null;
+        return moviesInMemory.stream().filter(a -> a.getId() == id).collect(Collectors.toList()).get(0);
+    }
+
+    private Integer getNewID(){
+        int maxValue=-1;
+        for(Movie movie:moviesInMemory){
+            if(maxValue<movie.getId()){
+                maxValue=movie.getId();
+            }
+        }
+        return maxValue+1;
+    }
+
+    private void saveStorage(){
+        try{
+            File file = new File(MOVIE_SOURCE);
+            List<String> out= new ArrayList<String>();
+            for(Movie movie:moviesInMemory){
+                out.add(movie.getId()+","+movie.getYear()+","+movie.getTitle());
+            }
+            Files.write(file.toPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        }catch(Exception e){
+            System.out.println("Problem saving to persistent storage, only saved in memory.")
+        }
     }
 
 }

@@ -9,15 +9,14 @@ import java.util.List;
 public class MovieManager {
     private MovieDAO movDAO=new MovieDAO(); // @todo move, shouldnt be here...
     private MovieSearcher movSearcher=new MovieSearcher();
-    public List<Movie> movies=null;
 
     public MovieManager(){
-        try{ movies = movDAO.getAllMovies(); }
+        try{ movDAO.getAllMovies(); }
         catch(Exception e){ }
     }
 
     public List<Movie> searchMovie(String query){
-        return movSearcher.search(movies,query);
+        return movSearcher.search(movDAO.moviesInMemory,query);
     }
 
     public List<String> toListString(List<Movie> moviesList){
