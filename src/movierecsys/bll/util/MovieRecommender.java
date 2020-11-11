@@ -5,7 +5,9 @@
  */
 package movierecsys.bll.util;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import movierecsys.be.Movie;
 import movierecsys.be.Rating;
 
@@ -23,9 +25,35 @@ public class MovieRecommender
      */
     public List<Movie> highAverageRecommendations(List<Rating> allRatings, List<Rating> excludeRatings)
     {
+        //Sorting -- remove videos already rated...
+        allRatings=allRatings.stream().filter((rating)->{
+            for(Rating rate:excludeRatings){
+                if(rating.getMovie()==rate.getMovie()) return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+
+        //Count and sort ratings..@todo
+        Map<Movie,Integer> mapOfObjects = new HashMap<Movie,Integer>();
+        for(Rating rate:allRatings){
+            if(mapOfObjects.get(rate.getMovie())!=null){
+                mapOfObjects.put(rate.getMovie(),mapOfObjects.get(rate.getMovie())+rate.getRating());
+            }else{
+                mapOfObjects.put(rate.getMovie(),rate.getRating());
+            }
+        }
+        Map<Movie,Integer> sortedMap=mapOfObjects.entrySet().stream()
+            .sorted(Map.Entry.comparingByValue())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                    (e1, e2) -> e1, LinkedHashMap::new));
+
+        return new ArrayList<Movie>(sortedMap.keySet());
+        //System.out.println("AllRatings sum:"+allRatings.stream().mapToDouble(Rating::getRating).sum());
         //TODO High average recommender
-        return null;
+        //return null;
     }
+
+
     
     /**
      * Returns a list of movie recommendations based on weighted recommendations. Excluding already rated movies from the list of results. 

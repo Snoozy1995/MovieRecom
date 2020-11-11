@@ -1,4 +1,4 @@
-package movierecsys.bll.util;
+package movierecsys.gui.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
