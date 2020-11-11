@@ -18,15 +18,8 @@ import movierecsys.dal.MovieDAO;
  */
 public class MovieSearcher
 {
-    private MovieDAO movDAO=new MovieDAO(); // @todo move, shouldnt be here...
     public List<Movie> search(List<Movie> searchBase, String query) { // fix ioexception in search to remove ioexception here @todo
-        try { if (searchBase == null) searchBase = movDAO.getAllMovies(); }
-        catch(Exception e){e.printStackTrace();}
-        finally{
-            return searchBase.stream().filter((movie) -> {
-                if (movie.getTitle().toLowerCase().trim().replaceAll("\\s+", "").indexOf(query.toLowerCase().trim().replaceAll("\\s+", "")) >= 0) return true;
-                return false;
-            }).collect(Collectors.toList());
-        }
+
+        return searchBase.stream().filter((movie) ->(movie.getTitle().toLowerCase().trim().replaceAll("\\s+", "").indexOf(query.toLowerCase().trim().replaceAll("\\s+", "")) >= 0)).collect(Collectors.toList());
     }
 }
