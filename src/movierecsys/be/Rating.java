@@ -34,15 +34,10 @@ public class Rating
      */
     public Rating(Movie movie, User user, int rating)
     {
-        try{
-            if(rating!=SUPER_BAD&&rating!=BAD&&rating!=NEUTRAL&&rating!=GOOD&&rating!=SUPER_GOOD) throw new MovieRecSysException("INVALID RATINGS VALUE");
-
-        }catch(MovieRecSysException e){
-
-        }
         this.movie = movie;
         this.user = user;
         this.rating = rating;
+        if(rating!=SUPER_BAD&&rating!=BAD&&rating!=NEUTRAL&&rating!=GOOD&&rating!=SUPER_GOOD) throw new MovieRecSysException("INVALID RATINGS VALUE");
     }
 
     /**
@@ -53,6 +48,7 @@ public class Rating
      */
     public void setRating(int rating)
     {
+        if(rating!=SUPER_BAD&&rating!=BAD&&rating!=NEUTRAL&&rating!=GOOD&&rating!=SUPER_GOOD) throw new MovieRecSysException("INVALID RATINGS VALUE");
         this.rating = rating;
     }
 

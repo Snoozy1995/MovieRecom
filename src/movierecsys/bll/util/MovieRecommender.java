@@ -43,10 +43,10 @@ public class MovieRecommender
             }
         }
         Map<Movie,Integer> sortedMap=mapOfObjects.entrySet().stream()
-            .sorted(Map.Entry.comparingByValue())
+            .sorted(Map.Entry.<Movie,Integer>comparingByValue().reversed())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                     (e1, e2) -> e1, LinkedHashMap::new));
-
+        System.out.println(new ArrayList<Movie>(sortedMap.keySet()).get(0).getTitle());
         return new ArrayList<Movie>(sortedMap.keySet());
         //System.out.println("AllRatings sum:"+allRatings.stream().mapToDouble(Rating::getRating).sum());
         //TODO High average recommender

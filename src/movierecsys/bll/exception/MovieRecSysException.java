@@ -9,7 +9,7 @@ package movierecsys.bll.exception;
  *
  * @author pgn
  */
-public class MovieRecSysException extends Exception
+public class MovieRecSysException extends IllegalArgumentException
 {
 
     public MovieRecSysException(String message)
