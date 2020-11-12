@@ -7,7 +7,6 @@ package movierecsys.dal;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ import movierecsys.be.Movie;
 public class MovieDAO {
 
     private static final String MOVIE_SOURCE = "data/movie_titles.txt";
-    private static final Path MOVIE = ;
     public List<Movie> moviesInMemory=null;
 
     //todo test functions below thoroughly
@@ -31,9 +29,9 @@ public class MovieDAO {
      * Gets a list of all movies in the persistence storage.
      *
      * @return List of movies.
-     * @throws java.io.FileNotFoundException
+     * @throws java.io.IOException If failed loading.
      */
-    public List<Movie> getAllMovies() throws FileNotFoundException, IOException {
+    public List<Movie> getAllMovies() throws IOException {
         List<Movie> allMovies = new ArrayList<>();
         File file = new File(MOVIE_SOURCE);
 
@@ -44,7 +42,7 @@ public class MovieDAO {
                     Movie mov = stringArrayToMovie(line);
                     allMovies.add(mov);
                 } catch (Exception ex) {
-                    System.out.println("Could not resolve stringline to movie, moving on to next line...\n["+line+"]");
+                    System.out.println("Could not resolve string line to movie, moving on to next line...\n["+line+"]");
                     //Do nothing we simply do not accept malformed lines of data.
                     //In a perfect world you should at least log the incident.
                 }
@@ -57,8 +55,8 @@ public class MovieDAO {
     /**
      * Reads a movie from a , s
      *
-     * @param t
-     * @return
+     * @param t represents the line string.
+     * @return Movie class object
      * @throws NumberFormatException
      */
     private Movie stringArrayToMovie(String t) {
@@ -148,7 +146,7 @@ public class MovieDAO {
             }
             Files.write(file.toPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         }catch(Exception e){
-            System.out.println("Problem saving to persistent storage, only saved in memory.")
+            System.out.println("Problem saving to persistent storage, only saved in memory.");
         }
     }
 
