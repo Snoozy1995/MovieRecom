@@ -42,7 +42,7 @@ public class MovieDAO {
                     Movie mov = stringArrayToMovie(line);
                     allMovies.add(mov);
                 } catch (Exception ex) {
-                    System.out.println("Could not resolve string line to movie, moving on to next line...\n["+line+"]");
+                    System.out.println("["+line+"]\nCould not resolve string line to movie, moving on to next line...");
                     //Do nothing we simply do not accept malformed lines of data.
                     //In a perfect world you should at least log the incident.
                 }
@@ -115,7 +115,9 @@ public class MovieDAO {
      * @param movie The updated movie.
      */
     private static void updateMovie(Movie movie) {
-        //todo check if it exists in the memory or add it...
+        if(getMovie(movie.getId())==null){
+            moviesInMemory.add(movie);
+        }
         saveStorage();
     }
 
@@ -148,7 +150,7 @@ public class MovieDAO {
             }
             Files.write(file.toPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         }catch(Exception e){
-            System.out.println("Problem saving to persistent storage, only saved in memory.");
+            System.out.println("[MovieDAO] Problem saving to persistent storage, only saved in memory.");
         }
     }
 

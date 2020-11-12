@@ -6,6 +6,8 @@
 package movierecsys.dal;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +45,6 @@ public class RatingDAO
         Rating rate=new Rating(movie,user,rating);
         ratingsInMemory.add(rate);
         return rate;
-        //TODO Rate movie
     }
     
     /**
@@ -52,7 +53,10 @@ public class RatingDAO
      */
     public void updateRating(Rating rating)
     {
-        //TODO Update rating
+        if(ratingsInMemory.stream().filter(a -> a==rating).collect(Collectors.toList()).get(0)==null){
+            ratingsInMemory.add(rating);
+        }
+        saveStorage();
     }
     
     /**
@@ -61,7 +65,8 @@ public class RatingDAO
      */
     public void deleteRating(Rating rating)
     {
-        //TODO Delete rating
+        ratingsInMemory.remove(rating);
+        saveStorage();
     }
     
     /**
@@ -119,6 +124,19 @@ public class RatingDAO
      */
     public static List<Rating> getRatings(User user){
         return ratingsInMemory.stream().filter(a -> a.getUser() == user).collect(Collectors.toList());
+    }
+
+    private static void saveStorage(){
+        try{
+            File file = new File(MOVIE_SOURCE);
+            List<String> out= new ArrayList<>();
+            for(Rating rating:ratingsInMemory){
+                out.add(rating.getMovie().getId()+","+rating.getUser().getId()+","+rating.getRating());
+            }
+            Files.write(file.toPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        }catch(Exception e){
+            System.out.println("[RatingDAO] Problem saving to persistent storage, only saved in memory.");
+        }
     }
     
 }

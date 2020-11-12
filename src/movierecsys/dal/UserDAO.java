@@ -5,13 +5,15 @@
  */
 package movierecsys.dal;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import movierecsys.be.Movie;
+import movierecsys.be.Rating;
 import movierecsys.be.User;
 
 /**
@@ -21,6 +23,7 @@ import movierecsys.be.User;
 
 
 //todo test functions below thoroughly
+    //todo move inMemory stuff to BLL layer maybe?
 
 
 public class UserDAO
@@ -81,19 +84,64 @@ public class UserDAO
      * @param id The ID of the user.
      * @return The User with the ID.
      */
-    public User getUser(int id)
+    public static User getUser(int id)
     {
-        //TODO Get User
-        return null;
+        return usersInMemory.stream().filter(a -> a.getId()==id).collect(Collectors.toList()).get(0);
     }
     
     /**
      * Updates a user so the persistence storage reflects the given User object.
      * @param user The updated user.
      */
-    public void updateUser(User user)
+    public static void updateUser(User user)
     {
-        //TODO Update user.
+        if(getUser(user.getId())==null){
+            usersInMemory.add(user);
+        }
+        saveStorage();
+    }
+
+    public static User createUser(String name){
+        int id=getNewID();
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
+            writer.write(id+","+name);
+            writer.close();
+        }catch(Exception e){
+            System.out.println("Problem saving to persistent storage, only saved in memory.");
+        }
+        User user=new User(id,name);
+        usersInMemory.add(user);
+        return user;
+    }
+
+    public void deleteUser(User user)
+    {
+        usersInMemory.remove(user);
+        saveStorage();
+    }
+
+    private static Integer getNewID(){
+        int maxValue=-1;
+        for(User user:usersInMemory){
+            if(maxValue<user.getId()){
+                maxValue=user.getId();
+            }
+        }
+        return maxValue+1;
+    }
+
+    private static void saveStorage(){
+        try{
+            File file = new File(MOVIE_SOURCE);
+            List<String> out= new ArrayList<>();
+            for(User user:usersInMemory){
+                out.add(user.getId()+","+user.getName());
+            }
+            Files.write(file.toPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        }catch(Exception e){
+            System.out.println("[UserDAO] Problem saving to persistent storage, only saved in memory.");
+        }
     }
     
 }
