@@ -5,9 +5,7 @@
  */
 package movierecsys.dal;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,18 +16,33 @@ import movierecsys.be.User;
 
 /**
  *
- * @author pgn
+ * @author Snoozy1995
  */
+
+
+//todo test functions below thoroughly
+
+
+
 public class RatingDAO
 {
     private static final String MOVIE_SOURCE = "data/movie_titles.txt";
-    public List<Rating> ratingsInMemory=null;
+    public static List<Rating> ratingsInMemory=null;
     /**
      * Persists the given rating.
      * @param rating the rating to persist.
      */
-    public void createRating(Rating rating)
-    {
+    public static Rating createRating(Movie movie, User user, int rating){
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
+            writer.write(movie.getId()+","+user.getId()+","+rating);
+            writer.close();
+        }catch(Exception e){
+            System.out.println("Problem saving to persistent storage, only saved in memory.");
+        }
+        Rating rate=new Rating(movie,user,rating);
+        ratingsInMemory.add(rate);
+        return rate;
         //TODO Rate movie
     }
     
@@ -55,7 +68,7 @@ public class RatingDAO
      * Gets all ratings from all users.
      * @return List of all ratings.
      */
-    public List<Rating> getAllRatings()
+    public static List<Rating> getAllRatings()
     {
         if(ratingsInMemory!=null) return ratingsInMemory;
         List<Rating> allRatings = new ArrayList<>();
@@ -87,17 +100,16 @@ public class RatingDAO
      * @return Movie class object
      * @throws NumberFormatException
      */
-    private Rating stringArrayToRating(String t) {
+    private static Rating stringArrayToRating(String t) {
         String[] arrMovie = t.split(",");
         int movieId = Integer.parseInt(arrMovie[0]);
         Movie movie=MovieDAO.getAllMovies().stream().filter(a -> a.getId() == movieId).collect(Collectors.toList()).get(0);
         //...
         int userId = Integer.parseInt(arrMovie[1]);
-        //User user=UserDAO.getAllUsers().stream().filter(a -> a.getId() == userId).collect(Collectors.toList()).get(0);
+        User user=UserDAO.getAllUsers().stream().filter(a -> a.getId() == userId).collect(Collectors.toList()).get(0);
         //...
         int rating = Integer.parseInt(arrMovie[2]);
-        //return new Rating(movie,user,rating);
-        return null;
+        return new Rating(movie,user,rating);
     }
     
     /**
@@ -105,10 +117,8 @@ public class RatingDAO
      * @param user The user 
      * @return The list of ratings.
      */
-    public List<Rating> getRatings(User user)
-    {
-        //TODO Get user ratings.
-        return null;
+    public static List<Rating> getRatings(User user){
+        return ratingsInMemory.stream().filter(a -> a.getUser() == user).collect(Collectors.toList());
     }
     
 }
