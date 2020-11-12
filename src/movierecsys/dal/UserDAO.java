@@ -23,12 +23,12 @@ import movierecsys.be.User;
 
 
 //todo test functions below thoroughly
-    //todo move inMemory stuff to BLL layer maybe?
+//todo move inMemory stuff to BLL layer maybe?
 
 
 public class UserDAO
 {
-    private static final String MOVIE_SOURCE = "data/movie_titles.txt";
+    private static final String MOVIE_SOURCE = "data/users.txt";
     public static List<User> usersInMemory=null;
     /**
      * Gets a list of all known users.
@@ -86,7 +86,7 @@ public class UserDAO
      */
     public static User getUser(int id)
     {
-        return usersInMemory.stream().filter(a -> a.getId()==id).collect(Collectors.toList()).get(0);
+        return getAllUsers().stream().filter(a -> a.getId()==id).collect(Collectors.toList()).get(0);
     }
     
     /**
@@ -95,6 +95,9 @@ public class UserDAO
      */
     public static void updateUser(User user)
     {
+        if(usersInMemory==null){
+            getAllUsers();
+        }
         if(getUser(user.getId())==null){
             usersInMemory.add(user);
         }
@@ -102,10 +105,13 @@ public class UserDAO
     }
 
     public static User createUser(String name){
+        if(usersInMemory==null){
+            getAllUsers();
+        }
         int id=getNewID();
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
-            writer.write(id+","+name);
+            writer.write(id+","+name+"\n");
             writer.close();
         }catch(Exception e){
             System.out.println("Problem saving to persistent storage, only saved in memory.");
@@ -115,13 +121,19 @@ public class UserDAO
         return user;
     }
 
-    public void deleteUser(User user)
+    public static void deleteUser(User user)
     {
+        if(usersInMemory==null){
+            getAllUsers();
+        }
         usersInMemory.remove(user);
         saveStorage();
     }
 
     private static Integer getNewID(){
+        if(usersInMemory==null){
+            getAllUsers();
+        }
         int maxValue=-1;
         for(User user:usersInMemory){
             if(maxValue<user.getId()){

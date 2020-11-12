@@ -88,7 +88,7 @@ public class MovieDAO {
         int id=getNewID();
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
-            writer.write(id+","+releaseYear+","+title);
+            writer.write(id+","+releaseYear+","+title+"\n");
             writer.close();
         }catch(Exception e){
             System.out.println("Problem saving to persistent storage, only saved in memory.");

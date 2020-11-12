@@ -28,7 +28,7 @@ import movierecsys.be.User;
 
 public class RatingDAO
 {
-    private static final String MOVIE_SOURCE = "data/movie_titles.txt";
+    private static final String MOVIE_SOURCE = "data/ratings.txt";
     public static List<Rating> ratingsInMemory=null;
     /**
      * Persists the given rating.
@@ -37,7 +37,7 @@ public class RatingDAO
     public static Rating createRating(Movie movie, User user, int rating){
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
-            writer.write(movie.getId()+","+user.getId()+","+rating);
+            writer.write(movie.getId()+","+user.getId()+","+rating+"\n");
             writer.close();
         }catch(Exception e){
             System.out.println("Problem saving to persistent storage, only saved in memory.");
