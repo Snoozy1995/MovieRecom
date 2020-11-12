@@ -20,7 +20,7 @@ import movierecsys.be.Movie;
 public class MovieDAO {
 
     private static final String MOVIE_SOURCE = "data/movie_titles.txt";
-    public List<Movie> moviesInMemory=null;
+    public static List<Movie> moviesInMemory=null;
 
     //todo test functions below thoroughly
 
@@ -29,9 +29,9 @@ public class MovieDAO {
      * Gets a list of all movies in the persistence storage.
      *
      * @return List of movies.
-     * @throws java.io.IOException If failed loading.
      */
-    public List<Movie> getAllMovies() throws IOException {
+    public static List<Movie> getAllMovies(){
+        if(moviesInMemory!=null) return moviesInMemory;
         List<Movie> allMovies = new ArrayList<>();
         File file = new File(MOVIE_SOURCE);
 
@@ -47,6 +47,8 @@ public class MovieDAO {
                     //In a perfect world you should at least log the incident.
                 }
             }
+        }catch(Exception e){
+            //todo handle
         }
         moviesInMemory=allMovies;
         return allMovies;
@@ -59,7 +61,7 @@ public class MovieDAO {
      * @return Movie class object
      * @throws NumberFormatException
      */
-    private Movie stringArrayToMovie(String t) {
+    private static Movie stringArrayToMovie(String t) {
         String[] arrMovie = t.split(",");
 
         int id = Integer.parseInt(arrMovie[0]);
@@ -82,7 +84,7 @@ public class MovieDAO {
      * @return The object representation of the movie added to the persistence
      * storage.
      */
-    private Movie createMovie(int releaseYear, String title) {
+    private static Movie createMovie(int releaseYear, String title) {
         int id=getNewID();
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
@@ -101,7 +103,7 @@ public class MovieDAO {
      *
      * @param movie The movie to delete.
      */
-    private void deleteMovie(Movie movie) {
+    private static void deleteMovie(Movie movie) {
         moviesInMemory.remove(movie);
         saveStorage();
     }
@@ -112,7 +114,7 @@ public class MovieDAO {
      *
      * @param movie The updated movie.
      */
-    private void updateMovie(Movie movie) {
+    private static void updateMovie(Movie movie) {
         //todo check if it exists in the memory or add it...
         saveStorage();
     }
@@ -123,11 +125,11 @@ public class MovieDAO {
      * @param id ID of the movie.
      * @return A Movie object.
      */
-    private Movie getMovie(int id) {
+    private static Movie getMovie(int id) {
         return moviesInMemory.stream().filter(a -> a.getId() == id).collect(Collectors.toList()).get(0);
     }
 
-    private Integer getNewID(){
+    private static Integer getNewID(){
         int maxValue=-1;
         for(Movie movie:moviesInMemory){
             if(maxValue<movie.getId()){
@@ -137,7 +139,7 @@ public class MovieDAO {
         return maxValue+1;
     }
 
-    private void saveStorage(){
+    private static void saveStorage(){
         try{
             File file = new File(MOVIE_SOURCE);
             List<String> out= new ArrayList<String>();

@@ -7,16 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovieManager {
-    private MovieDAO movDAO=new MovieDAO(); // @todo move, shouldnt be here...
     private MovieSearcher movSearcher=new MovieSearcher();
 
     public MovieManager(){
-        try{ movDAO.getAllMovies(); }
+        try{ MovieDAO.getAllMovies(); }
         catch(Exception e){ }
     }
 
     public List<Movie> searchMovie(String query){
-        return movSearcher.search(movDAO.moviesInMemory,query);
+        return movSearcher.search(MovieDAO.moviesInMemory,query);
     }
 
     public List<String> toListString(List<Movie> moviesList){
