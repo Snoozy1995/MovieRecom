@@ -1,8 +1,2 @@
-Regarding DAL layer: Would it be considered bad practice to use static functions and variables within this layer of the application?
-... My thought was to avoid having to construct an instance and passing it around between functions, instead making it easier to manage code wise since I in this case have just one datastore to manage, so theres not really a need for, for example multiple instances?
-
 Regarding exception handling: The IO exceptions that needs to be handled in terms of the DAL layer, should they be handled within the DAL layer or should I throw them and if so when should I catch it?
 ... Im thinking its best to catch the exceptions within the DAL layer itself and not throwing them further along?
-
-Regarding storing the data in memory: Would this be considered acceptable to avoid reading the file each time I need the list, or should I go by reading the file each time?
-

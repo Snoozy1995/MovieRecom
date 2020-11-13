@@ -11,7 +11,6 @@ package movierecsys.be;
  */
 public class Movie
 {
-
     private final int id;
     private String title;
     private int year;
@@ -47,7 +46,5 @@ public class Movie
     {
         this.year = year;
     }
-    
-    
 
 }

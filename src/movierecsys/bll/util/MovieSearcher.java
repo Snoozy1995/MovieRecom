@@ -14,7 +14,7 @@ import movierecsys.be.Movie;
  * @author Snoozy
  */
 public class MovieSearcher {
-    public List<Movie> search(List<Movie> searchBase, String query) { // fix ioexception in search to remove ioexception here @todo
+    public List<Movie> search(List<Movie> searchBase, String query) {
         return searchBase.stream().filter((movie) ->(movie.getTitle().toLowerCase().trim().replaceAll("\\s+", "").indexOf(query.toLowerCase().trim().replaceAll("\\s+", "")) >= 0)).collect(Collectors.toList());
     }
 }

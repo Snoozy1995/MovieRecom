@@ -23,7 +23,7 @@ import movierecsys.be.User;
 
 
 //todo test functions below thoroughly
-//todo move inMemory stuff to BLL layer maybe?
+//todo remove inmemory and implement sql also.
 
 
 public class UserDAO
