@@ -21,9 +21,11 @@ public class MovieDAO {
      */
     public static List<Movie> getAllMovies(){
         if(moviesInMemory!=null) return moviesInMemory;
-        List<String> array=new ArrayList<>();
+        List<String> array;
         if(!DAOConfiguration.useSQL) {
             array = FileDAO.readFileToList(FILE_SOURCE);
+        }else{
+            array=SQLDAO.selectToStringList("movies","id,releaseYear,title");
         }
         List<Movie> allMovies= new ArrayList<>();
         for(String line: array){
@@ -68,7 +70,10 @@ public class MovieDAO {
         int id=getNewID();
         if(!DAOConfiguration.useSQL){
             FileDAO.appendLineToFile(FILE_SOURCE,id+","+releaseYear+","+title);
+        }else{
+            SQLDAO.insertToTable("movies","id,releaseYear,title",id+","+releaseYear+","+title);
         }
+
         Movie movie=new Movie(id, releaseYear, title);
         moviesInMemory.add(movie);
         return movie;
@@ -81,7 +86,8 @@ public class MovieDAO {
      */
     private static void deleteMovie(Movie movie) {
         moviesInMemory.remove(movie);
-        saveStorage();
+        if(!DAOConfiguration.useSQL) saveStorage();
+        else SQLDAO.deleteFromTable("movies","id="+movie.getId());
     }
 
     /**
@@ -92,7 +98,8 @@ public class MovieDAO {
      */
     private static void updateMovie(Movie movie) {
         if(getMovie(movie.getId())==null){ moviesInMemory.add(movie); }
-        saveStorage();
+        if(!DAOConfiguration.useSQL) saveStorage();
+        else SQLDAO.updateToTable("movies","releaseYear="+movie.getYear()+",title="+movie.getTitle(),"id="+movie.getId());
     }
 
     /**
@@ -112,7 +119,8 @@ public class MovieDAO {
      */
     private static Integer getNewID(){
         int maxValue=-1;
-        for(Movie movie:moviesInMemory){
+        List<Movie> moviesList=getAllMovies();
+        for(Movie movie:moviesList){
             if(maxValue<movie.getId()){ maxValue=movie.getId(); }
         }
         return maxValue+1;
@@ -122,10 +130,11 @@ public class MovieDAO {
      * Saves the persistent storage for the movies.
      */
     private static void saveStorage(){
+        if(!DAOConfiguration.useSQL) return;
         List<String> out=new ArrayList<>();
         for(Movie movie:moviesInMemory){
             out.add(movie.getId()+","+movie.getYear()+","+movie.getTitle());
         }
-        if(!DAOConfiguration.useSQL) FileDAO.saveListToFile(FILE_SOURCE, out);
+        FileDAO.saveListToFile(FILE_SOURCE, out);
     }
 }

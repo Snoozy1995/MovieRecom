@@ -22,6 +22,8 @@ public class RatingDAO {
     public static Rating createRating(Movie movie, User user, int rating){
         if(!DAOConfiguration.useSQL){
             FileDAO.appendLineToFile(FILE_SOURCE,movie.getId()+","+user.getId()+","+rating);
+        }else{
+            SQLDAO.insertToTable("ratings","movie,user,rating",movie.getId()+","+user.getId()+","+rating);
         }
         Rating rate=new Rating(movie,user,rating);
         ratingsInMemory.add(rate);
@@ -33,10 +35,11 @@ public class RatingDAO {
      * @param rating The updated rating to persist.
      */
     public void updateRating(Rating rating){
-        if(ratingsInMemory.stream().filter(a -> a==rating).collect(Collectors.toList()).get(0)==null){
+        if(getAllRatings().stream().filter(a -> a==rating).collect(Collectors.toList()).get(0)==null){
             ratingsInMemory.add(rating);
         }
-        saveStorage();
+        if(!DAOConfiguration.useSQL) saveStorage();
+        else SQLDAO.updateToTable("ratings","rating="+rating.getRating(),"movie="+rating.getMovie().getId()+" AND user="+rating.getUser().getId());
     }
     
     /**
@@ -45,7 +48,8 @@ public class RatingDAO {
      */
     public void deleteRating(Rating rating){
         ratingsInMemory.remove(rating);
-        saveStorage();
+        if(!DAOConfiguration.useSQL) saveStorage();
+        else SQLDAO.deleteFromTable("ratings","movie="+rating.getMovie().getId()+" AND user="+rating.getUser().getId());
     }
     
     /**
@@ -54,9 +58,11 @@ public class RatingDAO {
      */
     public static List<Rating> getAllRatings() {
         if(ratingsInMemory!=null) return ratingsInMemory;
-        List<String> array = new ArrayList<>();
+        List<String> array;
         if(!DAOConfiguration.useSQL) {
             array = FileDAO.readFileToList(FILE_SOURCE);
+        }else{
+            array=SQLDAO.selectToStringList("ratings","movie,user,rating");
         }
         List<Rating> allRatings = new ArrayList<>();
         for(String line: array){
@@ -94,12 +100,11 @@ public class RatingDAO {
     }
 
     private static void saveStorage(){
+        if(!DAOConfiguration.useSQL) return;
         List<String> out= new ArrayList<>();
         for(Rating rating:ratingsInMemory){
             out.add(rating.getMovie().getId()+","+rating.getUser().getId()+","+rating.getRating());
         }
-        if(!DAOConfiguration.useSQL) {
-            FileDAO.saveListToFile(FILE_SOURCE, out);
-        }
+        FileDAO.saveListToFile(FILE_SOURCE, out);
     }
 }

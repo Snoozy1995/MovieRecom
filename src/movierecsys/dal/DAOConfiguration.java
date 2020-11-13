@@ -6,4 +6,5 @@ public class DAOConfiguration {
     static String SQL_PORT;
     static String SQL_USERNAME;
     static String SQL_PASSWORD;
+    static String SQL_DB;
 }

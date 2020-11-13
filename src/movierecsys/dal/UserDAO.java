@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import movierecsys.be.Movie;
 import movierecsys.be.User;
 
 /**
@@ -23,6 +24,8 @@ public class UserDAO {
         List<String> array=new ArrayList<>();
         if(!DAOConfiguration.useSQL) {
             array = FileDAO.readFileToList(FILE_SOURCE);
+        }else{
+            array = SQLDAO.selectToStringList("users","id,name");
         }
         List<User> allUsers = new ArrayList<>();
         for(String line: array){
@@ -75,7 +78,8 @@ public class UserDAO {
         if(getUser(user.getId())==null){
             usersInMemory.add(user);
         }
-        saveStorage();
+        if(!DAOConfiguration.useSQL) saveStorage();
+        else SQLDAO.updateToTable("users","name="+user.getName(),"id="+user.getId());
     }
 
     public static User createUser(String name){
@@ -85,6 +89,8 @@ public class UserDAO {
         int id=getNewID();
         if(!DAOConfiguration.useSQL){
             FileDAO.appendLineToFile(FILE_SOURCE,id+","+name);
+        }else{
+            SQLDAO.insertToTable("users","id,name",id+","+name);
         }
         User user=new User(id,name);
         usersInMemory.add(user);
@@ -96,15 +102,14 @@ public class UserDAO {
             getAllUsers();
         }
         usersInMemory.remove(user);
-        saveStorage();
+        if(!DAOConfiguration.useSQL) saveStorage();
+        else SQLDAO.deleteFromTable("users","id="+user.getId());
     }
 
     private static Integer getNewID(){
-        if(usersInMemory==null){
-            getAllUsers();
-        }
+        List<User> usersList=getAllUsers();
         int maxValue=-1;
-        for(User user:usersInMemory){
+        for(User user:usersList){
             if(maxValue<user.getId()){
                 maxValue=user.getId();
             }
@@ -113,11 +118,11 @@ public class UserDAO {
     }
 
     private static void saveStorage(){
+        if(!DAOConfiguration.useSQL) return;
         List<String> out= new ArrayList<>();
         for(User user:usersInMemory){
             out.add(user.getId()+","+user.getName());
         }
         FileDAO.saveListToFile(FILE_SOURCE,out);
     }
-    
 }
