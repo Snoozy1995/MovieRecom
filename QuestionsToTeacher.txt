@@ -1,7 +1,6 @@
 Regarding exception handling: The IO exceptions that needs to be handled in terms of the DAL layer, should they be handled within the DAL layer or should I throw them and if so when should I catch it?
 ... Im thinking its best to catch the exceptions within the DAL layer itself and not throwing them further along?
 
-
 Regarding recommendations: Whats the supposed difference between the highAverageRecommendations and the weightedRecommendations in the example code? Im done with the highAverageRecommendations and it passes the test so im assuming its correct, however im unsure what exactly the weightedRecommendations is supposed to do?
 
 Regarding recommendations: In terms of the more "sophisticated" approach, My current code filters down the ratings accordingly:
@@ -11,4 +10,4 @@ Regarding recommendations: In terms of the more "sophisticated" approach, My cur
 -> Do either a highAverageRecommendation/weightedRecommendations of those ratings (Movies that you rated yourself will be removed from the list in this method, thus only new movies).
 Would this be considered equivalent to the sophisticated approach detailed in the assignment and an acceptable final approach?
 
-Regarding JDBC: Ive gone ahead and implemented JDBC support for my DAL objects, so it supports both file persistent storage and SQL databases. Say I want to have a configuration file for optionally switching between them, what would be the right approach in regards to the 3 layer architecture, anything to keep in mind?
+Regarding JDBC: Ive gone ahead and implemented JDBC support for my DAL objects, so it supports both file persistent storage and SQL databases. Say I want to have a config file for optionally switching between them or something like that, what would be the right approach in regards to the 3 layer architecture, anything to keep in mind?
