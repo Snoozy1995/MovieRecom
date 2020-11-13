@@ -12,11 +12,7 @@ import movierecsys.be.User;
  * @author Snoozy1995
  */
 
-
-//todo test functions below thoroughly
-//todo remove inmemory and implement sql also.
-
-
+//todo remove inmemory? and implement sql also.
 public class UserDAO {
     private static final String FILE_SOURCE = "data/users.txt";
     private static String SQL_SOURCE;
@@ -36,7 +32,7 @@ public class UserDAO {
             try {
                 allUsers.add(stringArrayToUser(line));
             } catch (Exception ex) {
-                System.out.println("["+line+"]\nCould not resolve string line to movie, moving on to next line...");
+                System.out.println("["+line+"]\nCould not resolve string line to user object, moving on to next line...");
             }
         }
         usersInMemory=allUsers;
@@ -69,8 +65,7 @@ public class UserDAO {
      * @param id The ID of the user.
      * @return The User with the ID.
      */
-    public static User getUser(int id)
-    {
+    public static User getUser(int id){
         return getAllUsers().stream().filter(a -> a.getId()==id).collect(Collectors.toList()).get(0);
     }
     
@@ -78,8 +73,7 @@ public class UserDAO {
      * Updates a user so the persistence storage reflects the given User object.
      * @param user The updated user.
      */
-    public static void updateUser(User user)
-    {
+    public static void updateUser(User user){
         if(usersInMemory==null){
             getAllUsers();
         }
@@ -94,20 +88,15 @@ public class UserDAO {
             getAllUsers();
         }
         int id=getNewID();
-        try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_SOURCE, true));
-            writer.write(id+","+name+"\n");
-            writer.close();
-        }catch(Exception e){
-            System.out.println("Problem saving to persistent storage, only saved in memory.");
+        if(!DAOConfiguration.useSQL){
+            FileDAO.appendLineToFile(FILE_SOURCE,id+","+name);
         }
         User user=new User(id,name);
         usersInMemory.add(user);
         return user;
     }
 
-    public static void deleteUser(User user)
-    {
+    public static void deleteUser(User user){
         if(usersInMemory==null){
             getAllUsers();
         }

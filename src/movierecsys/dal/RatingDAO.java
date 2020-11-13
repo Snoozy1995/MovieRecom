@@ -13,11 +13,6 @@ import movierecsys.be.User;
  * @author Snoozy1995
  */
 
-
-//todo test functions below thoroughly
-
-
-
 public class RatingDAO
 {
     private static final String FILE_SOURCE = "data/ratings.txt";
@@ -73,7 +68,7 @@ public class RatingDAO
             try {
                 allRatings.add(stringArrayToRating(line));
             } catch (Exception ex) {
-                System.out.println("["+line+"]\nCould not resolve string line to movie, moving on to next line...");
+                System.out.println("["+line+"]\nCould not resolve string line to rating object, moving on to next line...");
             }
         }
         ratingsInMemory=allRatings;

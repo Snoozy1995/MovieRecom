@@ -11,13 +11,9 @@ import movierecsys.be.Movie;
  * @author Snoozy1995
  */
 public class MovieDAO {
-
     private static final String FILE_SOURCE = "data/movie_titles.txt";
     private static String SQL_SOURCE;
     public static List<Movie> moviesInMemory=null;
-
-    //todo test functions below thoroughly
-
 
     /**
      * Gets a list of all movies in the persistence storage.
@@ -35,7 +31,7 @@ public class MovieDAO {
             try {
                 allMovies.add(stringArrayToMovie(line));
             } catch (Exception ex) {
-                System.out.println("["+line+"]\nCould not resolve string line to movie, moving on to next line...");
+                System.out.println("["+line+"]\nCould not resolve string line to movie object, moving on to next line...");
             }
         }
         moviesInMemory=allMovies;
@@ -74,12 +70,8 @@ public class MovieDAO {
      */
     private static Movie createMovie(int releaseYear, String title) {
         int id=getNewID();
-        try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_SOURCE, true));
-            writer.write(id+","+releaseYear+","+title+"\n");
-            writer.close();
-        }catch(Exception e){
-            System.out.println("Problem saving to persistent storage, only saved in memory.");
+        if(!DAOConfiguration.useSQL){
+            FileDAO.appendLineToFile(FILE_SOURCE,id+","+releaseYear+","+title);
         }
         Movie movie=new Movie(id, releaseYear, title);
         moviesInMemory.add(movie);
@@ -103,9 +95,7 @@ public class MovieDAO {
      * @param movie The updated movie.
      */
     private static void updateMovie(Movie movie) {
-        if(getMovie(movie.getId())==null){
-            moviesInMemory.add(movie);
-        }
+        if(getMovie(movie.getId())==null){ moviesInMemory.add(movie); }
         saveStorage();
     }
 
@@ -119,23 +109,27 @@ public class MovieDAO {
         return getAllMovies().stream().filter(a -> a.getId() == id).collect(Collectors.toList()).get(0);
     }
 
+    /**
+     * Gets a new ID available for a new addition(Movie).
+     *
+     * @return Integer representing the new ID to be used..
+     */
     private static Integer getNewID(){
         int maxValue=-1;
         for(Movie movie:moviesInMemory){
-            if(maxValue<movie.getId()){
-                maxValue=movie.getId();
-            }
+            if(maxValue<movie.getId()){ maxValue=movie.getId(); }
         }
         return maxValue+1;
     }
 
+    /**
+     * Saves the persistent storage for the movies.
+     */
     private static void saveStorage(){
-        List<String> out= new ArrayList<String>();
+        List<String> out=new ArrayList<String>();
         for(Movie movie:moviesInMemory){
             out.add(movie.getId()+","+movie.getYear()+","+movie.getTitle());
         }
-        if(!DAOConfiguration.useSQL) {
-            FileDAO.saveListToFile(FILE_SOURCE, out);
-        }
+        if(!DAOConfiguration.useSQL) FileDAO.saveListToFile(FILE_SOURCE, out);
     }
 }
