@@ -9,12 +9,9 @@ import movierecsys.be.Rating;
 import movierecsys.be.User;
 
 /**
- *
  * @author Snoozy1995
  */
-
-public class RatingDAO
-{
+public class RatingDAO {
     private static final String FILE_SOURCE = "data/ratings.txt";
     private static String SQL_SOURCE;
     public static List<Rating> ratingsInMemory=null;
@@ -35,8 +32,7 @@ public class RatingDAO
      * Updates the rating to reflect the given object.
      * @param rating The updated rating to persist.
      */
-    public void updateRating(Rating rating)
-    {
+    public void updateRating(Rating rating){
         if(ratingsInMemory.stream().filter(a -> a==rating).collect(Collectors.toList()).get(0)==null){
             ratingsInMemory.add(rating);
         }
@@ -47,8 +43,7 @@ public class RatingDAO
      * Removes the given rating.
      * @param rating 
      */
-    public void deleteRating(Rating rating)
-    {
+    public void deleteRating(Rating rating){
         ratingsInMemory.remove(rating);
         saveStorage();
     }

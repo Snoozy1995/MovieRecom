@@ -1,6 +1,5 @@
 package movierecsys.dal;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,10 +7,8 @@ import java.util.stream.Collectors;
 import movierecsys.be.User;
 
 /**
- *
  * @author Snoozy1995
  */
-
 //todo remove inmemory? and implement sql also.
 public class UserDAO {
     private static final String FILE_SOURCE = "data/users.txt";
