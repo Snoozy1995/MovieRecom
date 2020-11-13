@@ -37,9 +37,12 @@ public class RatingDAO {
     public void updateRating(Rating rating){
         if(getAllRatings().stream().filter(a -> a==rating).collect(Collectors.toList()).get(0)==null){
             ratingsInMemory.add(rating);
+            if(!DAOConfiguration.useSQL) saveStorage();
+            else SQLDAO.insertToTable("ratings","movie,user,rating",rating.getMovie().getId()+","+rating.getUser().getId()+","+rating);
+        }else{
+            if(!DAOConfiguration.useSQL) saveStorage();
+            else SQLDAO.updateToTable("ratings","rating="+rating.getRating(),"movie="+rating.getMovie().getId()+" AND user="+rating.getUser().getId());
         }
-        if(!DAOConfiguration.useSQL) saveStorage();
-        else SQLDAO.updateToTable("ratings","rating="+rating.getRating(),"movie="+rating.getMovie().getId()+" AND user="+rating.getUser().getId());
     }
     
     /**
