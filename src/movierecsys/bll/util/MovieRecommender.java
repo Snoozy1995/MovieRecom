@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package movierecsys.bll.util;
 
 import java.util.*;
@@ -101,8 +96,7 @@ public class MovieRecommender
     }
 
     private boolean badAllRatingsParameter(List<Rating> allRatings){
-        if(allRatings==null||allRatings.size()==0) return true;
-        return false;
+        return (allRatings == null || allRatings.size() == 0);
     }
 
     private List<Rating> excludeFromRating(List<Rating> allRatings, List<Rating> excludeRatings){
