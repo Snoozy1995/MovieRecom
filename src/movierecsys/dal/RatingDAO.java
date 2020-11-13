@@ -13,7 +13,7 @@ import movierecsys.be.User;
  */
 public class RatingDAO {
     private static final String FILE_SOURCE = "data/ratings.txt";
-    private static String SQL_SOURCE;
+    private static String SQL_SOURCE="ratings";
     public static List<Rating> ratingsInMemory=null;
     /**
      * Persists the given rating.
@@ -23,7 +23,7 @@ public class RatingDAO {
         if(!DAOConfiguration.useSQL){
             FileDAO.appendLineToFile(FILE_SOURCE,movie.getId()+","+user.getId()+","+rating);
         }else{
-            SQLDAO.insertToTable("ratings","movie,user,rating",movie.getId()+","+user.getId()+","+rating);
+            SQLDAO.insertToTable(SQL_SOURCE,"movie,user,rating",movie.getId()+","+user.getId()+","+rating);
         }
         Rating rate=new Rating(movie,user,rating);
         ratingsInMemory.add(rate);
@@ -38,10 +38,10 @@ public class RatingDAO {
         if(getAllRatings().stream().filter(a -> a==rating).collect(Collectors.toList()).get(0)==null){
             ratingsInMemory.add(rating);
             if(!DAOConfiguration.useSQL) saveStorage();
-            else SQLDAO.insertToTable("ratings","movie,user,rating",rating.getMovie().getId()+","+rating.getUser().getId()+","+rating);
+            else SQLDAO.insertToTable(SQL_SOURCE,"movie,user,rating",rating.getMovie().getId()+","+rating.getUser().getId()+","+rating);
         }else{
             if(!DAOConfiguration.useSQL) saveStorage();
-            else SQLDAO.updateToTable("ratings","rating="+rating.getRating(),"movie="+rating.getMovie().getId()+" AND user="+rating.getUser().getId());
+            else SQLDAO.updateToTable(SQL_SOURCE,"rating="+rating.getRating(),"movie="+rating.getMovie().getId()+" AND user="+rating.getUser().getId());
         }
     }
     
@@ -52,7 +52,7 @@ public class RatingDAO {
     public void deleteRating(Rating rating){
         ratingsInMemory.remove(rating);
         if(!DAOConfiguration.useSQL) saveStorage();
-        else SQLDAO.deleteFromTable("ratings","movie="+rating.getMovie().getId()+" AND user="+rating.getUser().getId());
+        else SQLDAO.deleteFromTable(SQL_SOURCE,"movie="+rating.getMovie().getId()+" AND user="+rating.getUser().getId());
     }
     
     /**
@@ -65,7 +65,7 @@ public class RatingDAO {
         if(!DAOConfiguration.useSQL) {
             array = FileDAO.readFileToList(FILE_SOURCE);
         }else{
-            array=SQLDAO.selectToStringList("ratings","movie,user,rating");
+            array=SQLDAO.selectToStringList(SQL_SOURCE,"movie,user,rating");
         }
         List<Rating> allRatings = new ArrayList<>();
         for(String line: array){
