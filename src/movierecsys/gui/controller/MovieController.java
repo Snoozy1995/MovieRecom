@@ -13,12 +13,14 @@ import movierecsys.bll.util.MovieManager;
 import movierecsys.bll.util.MovieRecommender;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class MovieController implements Initializable {
     public ObservableList<String> moviesList= FXCollections.observableArrayList();
     public ObservableList<String> recommendedList= FXCollections.observableArrayList();
+    public ObservableList<String> watchedList= FXCollections.observableArrayList();
     public MovieManager movieManager=new MovieManager();
     public MovieRecommender movieRecommender=new MovieRecommender();
     @FXML
@@ -27,11 +29,14 @@ public class MovieController implements Initializable {
     private ListView<String> lstMovies;
     @FXML
     private ListView<String> lstRecommended;
+    @FXML
+    private ListView<String> lstWatched;
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
         lstMovies.setItems(moviesList);
         lstRecommended.setItems(recommendedList);
+        lstWatched.setItems(watchedList);
         System.out.println("movieManager.getAllRatings()");
         List<Rating> allRatings=movieManager.getAllRatings();
         System.out.println("allRatings size:"+allRatings.size());
@@ -40,7 +45,8 @@ public class MovieController implements Initializable {
         System.out.println("movieRecommender.getSimilarRecommendations()");
         List<Movie> recommendedMovies=movieRecommender.getSimilarRecommendations(allRatings,ownRatings);
         System.out.println("movieManager.toListString()");
-        recommendedList.setAll(movieManager.toListString(recommendedMovies));
+        recommendedList.setAll(movieManager.toListString(recommendedMovies.subList(0,24))); //Top 25
+        watchedList.setAll(movieManager.toListStringRating(ownRatings));
 
         //recommendedList.setAll(movieManager.toListString(movieRecommender.getSimilarRecommendations(movieManager.getAllRatings(), movieManager.getRatingsByUser(LoginManager.getLoggedInUser()))));
         txtMovieSearch.textProperty().addListener((obs, oldText, newText) -> moviesList.setAll(movieManager.toListString(movieManager.searchMovie(newText))));

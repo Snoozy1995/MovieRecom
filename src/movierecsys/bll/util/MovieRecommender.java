@@ -111,10 +111,10 @@ public class MovieRecommender
         }*/
         List<Rating> sameMovieRatings=allRatings.parallelStream().filter((rating)->{
             for(Rating rate:ownRatings){
-                if(rating==rate) return false; // If rating same as rate then dont include.
                 int similarityBias=15; //When shouldnt we trust a person.
-                if(rating.getRating()*rate.getRating()<similarityBias) return false; //@todo maybe remove, but for now keep. removes any bad similarity rating.
-                if(rating.getMovie()==rate.getMovie()) return true; //If same movie then include.
+                if(rating==rate) return false; // If rating same as rate then dont include.
+                else if(rating.getRating()*rate.getRating()<similarityBias) return false; //@todo maybe remove, but for now keep. removes any bad similarity rating.
+                else if(rating.getMovie().getId()==rate.getMovie().getId()) return true; //If same movie, include.
             }
             return false; // Dont include.
         }).collect(Collectors.toList());
@@ -147,18 +147,12 @@ public class MovieRecommender
 
         List<Rating> userRatings=allRatings.parallelStream().filter((rating)->{
             for(Rating rate:sameMovieRatings){
+                if(rating.getMovie()==rate.getMovie()) return false;
                 if(rating.getRating()<0) return false;
                 if(rating.getUser()==rate.getUser()) return true;
             }
             return false;
         }).collect(Collectors.toList());
-
-        /*List<Rating> userRatings=excludeFromRatingIfSameMovie(allRatings.parallelStream().filter((rating)->{
-            for(Rating rate:sameMovieRatings){
-                if(rating.getUser()==rate.getUser()) return true;
-            }
-            return false;
-        }).collect(Collectors.toList()),ownRatings);*/
 
         System.out.println("Step 5 userRating size:"+userRatings.size());
         //Applying similarityFactor to values to be sorted.

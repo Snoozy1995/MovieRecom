@@ -52,14 +52,15 @@ public class MovieDAO {
      */
     private static Movie stringArrayToMovie(String t) {
         String[] arrMovie = t.split(",");
-
+        int year=0;
+        try{ year=Integer.parseInt(arrMovie[1]); }catch(Exception e){}
         String title = arrMovie[2];
         if (arrMovie.length > 3) {
             for (int i = 3; i < arrMovie.length; i++) {
                 title += "," + arrMovie[i];
             }
         }
-        return new Movie(Integer.parseInt(arrMovie[0]),Integer.parseInt(arrMovie[1]),title);
+        return new Movie(Integer.parseInt(arrMovie[0]),year,title);
     }
 
     /**

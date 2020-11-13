@@ -35,4 +35,12 @@ public class MovieManager {
         }
         return moviesString;
     }
+
+    public List<String> toListStringRating(List<Rating> ratingsList){
+        List<String> moviesString=new ArrayList<>();
+        for(Rating rating:ratingsList){
+            moviesString.add("["+rating.getRating()+"] "+rating.getMovie().getTitle());
+        }
+        return moviesString;
+    }
 }
