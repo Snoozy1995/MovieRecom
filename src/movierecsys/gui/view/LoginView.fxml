@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<HBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="movierecsys.gui.controller.LoginController">
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-    <VBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
-        <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Movie Recommendation System" textAlignment="CENTER" VBox.vgrow="ALWAYS">
-                <font>
-                    <Font name="Book Antiqua Bold" size="30.0" />
-                </font>
-            </Label>
-        </children>
-        <padding>
-            <Insets bottom="10.0" />
-        </padding>
-        <BorderPane.margin>
-            <Insets left="5.0" right="5.0" />
-        </BorderPane.margin>
-    </VBox>
-    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
-        <children>
-            <ListView fx:id="lstUsers" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-        </children>
-    </VBox>
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" style="-fx-background-color: #393230; -fx-border-radius: 50px; -fx-border-width: 5px; -fx-border-color: transparent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="movierecsys.gui.controller.LoginController">
+   <children>
+      <ListView fx:id="lstUsers" prefHeight="200.0" prefWidth="200.0" />
+      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <TextField fx:id="loginInput" layoutX="23.0" layoutY="119.0" />
+            <Button fx:id="loginButton" defaultButton="true" layoutX="23.0" layoutY="151.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="149.0" text="Create User/Login" />
+            <Text fill="WHITE" fontSmoothingType="LCD" layoutX="63.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+               <font>
+                  <Font name="Calibri" size="32.0" />
+               </font>
+            </Text>
+            <Text fill="#d0d0d0" fontSmoothingType="LCD" layoutX="23.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Double click on a username from the list or type one below to create a new user." wrappingWidth="150.0" />
+            <Button fx:id="closeButton" layoutX="165.0" layoutY="1.0" mnemonicParsing="false" onAction="#closeButtonAction" style="-fx-background-color: transparent;" text="X" textFill="#d3d3d3">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <tooltip>
+                  <Tooltip text="Close application" />
+               </tooltip>
+            </Button>
+         </children>
+      </AnchorPane>
+   </children>
 </HBox>

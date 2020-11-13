@@ -3,6 +3,8 @@ package movierecsys.dal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import movierecsys.be.Movie;
@@ -90,10 +92,12 @@ public class RatingDAO {
      * @throws NumberFormatException Due to invalid parseInts.
      */
     private static Rating stringArrayToRating(String t) {
-        String[] arrMovie = t.split(",");
-        Movie movie=MovieDAO.moviesHashMap.get(Integer.parseInt(arrMovie[0]));
-        User user=UserDAO.usersHashMap.get(Integer.parseInt(arrMovie[1]));
-        Rating rating=new Rating(movie,user,Integer.parseInt(arrMovie[2]));
+        int first=t.indexOf(',');
+        int last=t.lastIndexOf(',');
+
+        Movie movie=MovieDAO.moviesHashMap.get(Integer.parseInt(t.substring(0,first)));
+        User user=UserDAO.usersHashMap.get(Integer.parseInt(t.substring(first+1,last)));
+        Rating rating=new Rating(movie,user,Integer.parseInt(t.substring(last+1)));
         if(movieListHashMap.get(movie)==null){
             movieListHashMap.put(movie,new ArrayList<>());
         }

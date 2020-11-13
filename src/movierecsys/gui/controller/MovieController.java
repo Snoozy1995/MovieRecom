@@ -14,6 +14,7 @@ import movierecsys.bll.util.MovieRecommender;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -34,6 +35,7 @@ public class MovieController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+        long startTime = new Date().getTime();
         lstMovies.setItems(moviesList);
         lstRecommended.setItems(recommendedList);
         lstWatched.setItems(watchedList);
@@ -48,6 +50,10 @@ public class MovieController implements Initializable {
         recommendedList.setAll(movieManager.toListString(recommendedMovies.subList(0,24))); //Top 25
         watchedList.setAll(movieManager.toListStringRating(ownRatings));
 
+
+        long endTime = new Date().getTime();
+        long difference = endTime - startTime;
+        System.out.println("Elapsed time in milliseconds: " + difference);
         txtMovieSearch.textProperty().addListener((obs, oldText, newText) -> moviesList.setAll(movieManager.toListString(movieManager.searchMovie(newText))));
     }
 }

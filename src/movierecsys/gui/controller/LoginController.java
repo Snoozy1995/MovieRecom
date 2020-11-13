@@ -2,6 +2,7 @@ package movierecsys.gui.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,11 @@ public class LoginController implements Initializable {
     public ObservableList<String> usersList= FXCollections.observableArrayList();
     @FXML
     private ListView<String> lstUsers;
+    @FXML
+    private void closeButtonAction(ActionEvent event) {
+        System.exit(0);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
@@ -42,6 +48,7 @@ public class LoginController implements Initializable {
                             current_stage.close();
                             Stage stage = new Stage();
                             stage.setScene(new Scene(root1));
+                            stage.setTitle("Movie Recommendation Application");
                             stage.setResizable(false);
                             stage.show();
                         } catch(Exception e) {
