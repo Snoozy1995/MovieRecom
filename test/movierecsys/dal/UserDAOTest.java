@@ -1,13 +1,7 @@
 package movierecsys.dal;
 
 import movierecsys.be.User;
-import movierecsys.bll.exception.MovieRecSysException;
-import movierecsys.bll.util.MovieSearcher;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -15,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 public class UserDAOTest {
 
     @Test
-    public void testUserCreate() throws IOException { // fix ioexception in search to remove ioexception here @todo
+    public void testUserCreate() {
         System.out.println("createUser");
         User user = UserDAO.createUser("TestName");
         UserDAO.deleteUser(user);
@@ -23,7 +17,7 @@ public class UserDAOTest {
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void testUserDelete() throws IOException { // fix ioexception in search to remove ioexception here @todo
+    public void testUserDelete() {
         System.out.println("deleteUser");
         User user = UserDAO.createUser("TestName");
         UserDAO.deleteUser(user);
