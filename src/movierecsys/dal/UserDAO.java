@@ -1,13 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package movierecsys.dal;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,9 +17,9 @@ import movierecsys.be.User;
 //todo remove inmemory and implement sql also.
 
 
-public class UserDAO
-{
-    private static final String MOVIE_SOURCE = "data/users.txt";
+public class UserDAO {
+    private static final String FILE_SOURCE = "data/users.txt";
+    private static String SQL_SOURCE;
     public static List<User> usersInMemory=null;
     /**
      * Gets a list of all known users.
@@ -34,23 +27,17 @@ public class UserDAO
      */
     public static List<User> getAllUsers(){
         if(usersInMemory!=null) return usersInMemory;
-        List<User> allUsers = new ArrayList<User>();
-        File file = new File(MOVIE_SOURCE);
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                try {
-                    User user = stringArrayToUser(line);
-                    allUsers.add(user);
-                } catch (Exception ex) {
-                    System.out.println("Could not resolve string line to movie, moving on to next line...\n["+line+"]");
-                    //Do nothing we simply do not accept malformed lines of data.
-                    //In a perfect world you should at least log the incident.
-                }
+        List<String> array=new ArrayList<>();
+        if(!DAOConfiguration.useSQL) {
+            array = FileDAO.readFileToList(FILE_SOURCE);
+        }
+        List<User> allUsers = new ArrayList<>();
+        for(String line: array){
+            try {
+                allUsers.add(stringArrayToUser(line));
+            } catch (Exception ex) {
+                System.out.println("["+line+"]\nCould not resolve string line to movie, moving on to next line...");
             }
-        }catch(Exception e){
-            //todo handle
         }
         usersInMemory=allUsers;
         return allUsers;
@@ -108,7 +95,7 @@ public class UserDAO
         }
         int id=getNewID();
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_SOURCE, true));
             writer.write(id+","+name+"\n");
             writer.close();
         }catch(Exception e){
@@ -142,16 +129,11 @@ public class UserDAO
     }
 
     private static void saveStorage(){
-        try{
-            File file = new File(MOVIE_SOURCE);
-            List<String> out= new ArrayList<>();
-            for(User user:usersInMemory){
-                out.add(user.getId()+","+user.getName());
-            }
-            Files.write(file.toPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-        }catch(Exception e){
-            System.out.println("[UserDAO] Problem saving to persistent storage, only saved in memory.");
+        List<String> out= new ArrayList<>();
+        for(User user:usersInMemory){
+            out.add(user.getId()+","+user.getName());
         }
+        FileDAO.saveListToFile(FILE_SOURCE,out);
     }
     
 }

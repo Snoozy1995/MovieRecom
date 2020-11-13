@@ -9,10 +9,9 @@ import movierecsys.bll.exception.MovieRecSysException;
 
 /**
  *
- * @author pgn
+ * @author Snoozy1995
  */
-public class Rating
-{
+public class Rating {
 
     public static final int SUPER_BAD = -5;
     public static final int BAD = -3;
@@ -32,8 +31,7 @@ public class Rating
      * @param rating The value of the rating. Only the constants of the Rating
      * class are allowed values.
      */
-    public Rating(Movie movie, User user, int rating)
-    {
+    public Rating(Movie movie, User user, int rating) {
         this.movie = movie;
         this.user = user;
         this.rating = rating;
@@ -46,8 +44,7 @@ public class Rating
      *
      * @param rating The rating to set.
      */
-    public void setRating(int rating)
-    {
+    public void setRating(int rating) {
         if(rating!=SUPER_BAD&&rating!=BAD&&rating!=NEUTRAL&&rating!=GOOD&&rating!=SUPER_GOOD) throw new MovieRecSysException("INVALID RATINGS VALUE");
         this.rating = rating;
     }

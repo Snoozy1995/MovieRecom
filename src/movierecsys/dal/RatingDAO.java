@@ -1,13 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package movierecsys.dal;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,19 +20,16 @@ import movierecsys.be.User;
 
 public class RatingDAO
 {
-    private static final String MOVIE_SOURCE = "data/ratings.txt";
+    private static final String FILE_SOURCE = "data/ratings.txt";
+    private static String SQL_SOURCE;
     public static List<Rating> ratingsInMemory=null;
     /**
      * Persists the given rating.
      * @param rating the rating to persist.
      */
     public static Rating createRating(Movie movie, User user, int rating){
-        try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
-            writer.write(movie.getId()+","+user.getId()+","+rating+"\n");
-            writer.close();
-        }catch(Exception e){
-            System.out.println("Problem saving to persistent storage, only saved in memory.");
+        if(!DAOConfiguration.useSQL){
+            FileDAO.appendLineToFile(FILE_SOURCE,movie.getId()+","+user.getId()+","+rating);
         }
         Rating rate=new Rating(movie,user,rating);
         ratingsInMemory.add(rate);
@@ -73,26 +62,19 @@ public class RatingDAO
      * Gets all ratings from all users.
      * @return List of all ratings.
      */
-    public static List<Rating> getAllRatings()
-    {
+    public static List<Rating> getAllRatings() {
         if(ratingsInMemory!=null) return ratingsInMemory;
+        List<String> array = new ArrayList<>();
+        if(!DAOConfiguration.useSQL) {
+            array = FileDAO.readFileToList(FILE_SOURCE);
+        }
         List<Rating> allRatings = new ArrayList<>();
-        File file = new File(MOVIE_SOURCE);
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                try {
-                    Rating rating = stringArrayToRating(line);
-                    allRatings.add(rating);
-                } catch (Exception ex) {
-                    System.out.println("Could not resolve string line to movie, moving on to next line...\n["+line+"]");
-                    //Do nothing we simply do not accept malformed lines of data.
-                    //In a perfect world you should at least log the incident.
-                }
+        for(String line: array){
+            try {
+                allRatings.add(stringArrayToRating(line));
+            } catch (Exception ex) {
+                System.out.println("["+line+"]\nCould not resolve string line to movie, moving on to next line...");
             }
-        }catch(Exception e){
-            //todo
         }
         ratingsInMemory=allRatings;
         return ratingsInMemory;
@@ -123,20 +105,16 @@ public class RatingDAO
      * @return The list of ratings.
      */
     public static List<Rating> getRatings(User user){
-        return ratingsInMemory.stream().filter(a -> a.getUser() == user).collect(Collectors.toList());
+        return getAllRatings().stream().filter(a -> a.getUser() == user).collect(Collectors.toList());
     }
 
     private static void saveStorage(){
-        try{
-            File file = new File(MOVIE_SOURCE);
-            List<String> out= new ArrayList<>();
-            for(Rating rating:ratingsInMemory){
-                out.add(rating.getMovie().getId()+","+rating.getUser().getId()+","+rating.getRating());
-            }
-            Files.write(file.toPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-        }catch(Exception e){
-            System.out.println("[RatingDAO] Problem saving to persistent storage, only saved in memory.");
+        List<String> out= new ArrayList<>();
+        for(Rating rating:ratingsInMemory){
+            out.add(rating.getMovie().getId()+","+rating.getUser().getId()+","+rating.getRating());
+        }
+        if(!DAOConfiguration.useSQL) {
+            FileDAO.saveListToFile(FILE_SOURCE, out);
         }
     }
-    
 }

@@ -1,13 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package movierecsys.dal;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +12,8 @@ import movierecsys.be.Movie;
  */
 public class MovieDAO {
 
-    private static final String MOVIE_SOURCE = "data/movie_titles.txt";
+    private static final String FILE_SOURCE = "data/movie_titles.txt";
+    private static String SQL_SOURCE;
     public static List<Movie> moviesInMemory=null;
 
     //todo test functions below thoroughly
@@ -32,23 +26,17 @@ public class MovieDAO {
      */
     public static List<Movie> getAllMovies(){
         if(moviesInMemory!=null) return moviesInMemory;
-        List<Movie> allMovies = new ArrayList<>();
-        File file = new File(MOVIE_SOURCE);
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                try {
-                    Movie mov = stringArrayToMovie(line);
-                    allMovies.add(mov);
-                } catch (Exception ex) {
-                    System.out.println("["+line+"]\nCould not resolve string line to movie, moving on to next line...");
-                    //Do nothing we simply do not accept malformed lines of data.
-                    //In a perfect world you should at least log the incident.
-                }
+        List<String> array=new ArrayList<>();
+        if(!DAOConfiguration.useSQL) {
+            array = FileDAO.readFileToList(FILE_SOURCE);
+        }
+        List<Movie> allMovies= new ArrayList<>();
+        for(String line: array){
+            try {
+                allMovies.add(stringArrayToMovie(line));
+            } catch (Exception ex) {
+                System.out.println("["+line+"]\nCould not resolve string line to movie, moving on to next line...");
             }
-        }catch(Exception e){
-            //todo handle
         }
         moviesInMemory=allMovies;
         return allMovies;
@@ -87,7 +75,7 @@ public class MovieDAO {
     private static Movie createMovie(int releaseYear, String title) {
         int id=getNewID();
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(MOVIE_SOURCE, true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_SOURCE, true));
             writer.write(id+","+releaseYear+","+title+"\n");
             writer.close();
         }catch(Exception e){
@@ -128,7 +116,7 @@ public class MovieDAO {
      * @return A Movie object.
      */
     private static Movie getMovie(int id) {
-        return moviesInMemory.stream().filter(a -> a.getId() == id).collect(Collectors.toList()).get(0);
+        return getAllMovies().stream().filter(a -> a.getId() == id).collect(Collectors.toList()).get(0);
     }
 
     private static Integer getNewID(){
@@ -142,16 +130,12 @@ public class MovieDAO {
     }
 
     private static void saveStorage(){
-        try{
-            File file = new File(MOVIE_SOURCE);
-            List<String> out= new ArrayList<String>();
-            for(Movie movie:moviesInMemory){
-                out.add(movie.getId()+","+movie.getYear()+","+movie.getTitle());
-            }
-            Files.write(file.toPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-        }catch(Exception e){
-            System.out.println("[MovieDAO] Problem saving to persistent storage, only saved in memory.");
+        List<String> out= new ArrayList<String>();
+        for(Movie movie:moviesInMemory){
+            out.add(movie.getId()+","+movie.getYear()+","+movie.getTitle());
+        }
+        if(!DAOConfiguration.useSQL) {
+            FileDAO.saveListToFile(FILE_SOURCE, out);
         }
     }
-
 }
