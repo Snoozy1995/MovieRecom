@@ -118,7 +118,7 @@ public class UserDAO {
     }
 
     private static void saveStorage(){
-        if(!DAOConfiguration.useSQL) return;
+        if(DAOConfiguration.useSQL) return;
         List<String> out= new ArrayList<>();
         for(User user:usersInMemory){
             out.add(user.getId()+","+user.getName());

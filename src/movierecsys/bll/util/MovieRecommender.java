@@ -24,20 +24,44 @@ public class MovieRecommender
         allRatings=excludeFromRating(allRatings,excludeRatings);
 
         //Using a hashmap and java stream -> count and sort ratings...
-        Map<Movie,Integer> mapOfObjects = new HashMap<>();
+        HashMap<Movie,Integer> mapOfObjects = new HashMap<>();
         for(Rating rate:allRatings){
             mapOfObjects.merge(rate.getMovie(), rate.getRating(), Integer::sum);
         }
-        Map<Movie,Integer> sortedMap=mapOfObjects.entrySet().stream()
-            .sorted(Map.Entry.<Movie,Integer>comparingByValue().reversed())
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                    (e1, e2) -> e1, LinkedHashMap::new));
 
-        return new ArrayList<>(sortedMap.keySet());
+        return new ArrayList<>(sortHashMap(mapOfObjects).keySet());
     }
 
 
-    
+    public List<Movie> averageRecommendations(List<Rating> allRatings, List<Rating> excludeRatings)
+    {
+        if(badAllRatingsParameter(allRatings)) return null;
+        allRatings=excludeFromRating(allRatings,excludeRatings);
+
+        //Using a hashmap and java stream -> count and sort ratings...
+        HashMap<Movie,Integer> mapOfObjectsSum = new HashMap<>();
+        HashMap<Movie,Integer> mapOfObjectsCounter = new HashMap<>();
+        for(Rating rate:allRatings){
+            mapOfObjectsSum.merge(rate.getMovie(), rate.getRating(), Integer::sum);
+            mapOfObjectsCounter.merge(rate.getMovie(),1,Integer::sum);
+        }
+
+        HashMap<Movie,Integer> mapOfObjectsFinal = new HashMap<>();
+
+        for (Map.Entry<Movie,Integer> me : mapOfObjectsSum.entrySet()) {
+            mapOfObjectsFinal.put(me.getKey(),me.getValue()/mapOfObjectsCounter.get(me.getKey()));
+        }
+
+        return new ArrayList<>(sortHashMap(mapOfObjectsFinal).keySet());
+    }
+
+    private HashMap<Movie,Integer> sortHashMap(HashMap<Movie,Integer> hashmap){
+        return hashmap.entrySet().stream()
+                .sorted(Map.Entry.<Movie,Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (e1, e2) -> e1, LinkedHashMap::new));
+    }
+
     /**
      * Returns a list of movie recommendations based on weighted recommendations. Excluding already rated movies from the list of results. 
      * @param allRatings List of all users ratings.
@@ -72,8 +96,18 @@ public class MovieRecommender
      * @param ownRatings List of Ratings (aka. movies) that the user rated themselves.
      * @return Sorted list of movies recommended to the caller. Sorted in descending order.
      */
-    public List<Movie> getSimilarRecommendations(List<Rating> allRatings, List<Rating> ownRatings){
+    public List<Movie> getSimilarRecommendationsSum(List<Rating> allRatings, List<Rating> ownRatings){
+        //Do either a highAverageRecommendation or weighted recommendation. For now highAverageRecommendation:...
+        return highAverageRecommendations(processRecommendationsDefault(allRatings,ownRatings),ownRatings);
+    }
 
+    public List<Movie> getSimilarRecommendationsAvg(List<Rating> allRatings, List<Rating> ownRatings){
+        //Do either a highAverageRecommendation or weighted recommendation. For now highAverageRecommendation:...
+        return averageRecommendations(processRecommendationsDefault(allRatings,ownRatings),ownRatings);
+    }
+
+    private List<Rating> processRecommendationsDefault(List<Rating> allRatings,List<Rating> ownRatings){
+        if(badAllRatingsParameter(allRatings)) return null;
         //Retrieve all ratings from movies that also you rated yourself...
         List<Rating> sameMovieRatings=allRatings.stream().filter((rating)->{
             for(Rating rate:ownRatings){
@@ -84,15 +118,12 @@ public class MovieRecommender
 
 
         //Retrieve all ratings from the users that did those ratings...
-        List<Rating> similarUsersRatings=allRatings.stream().filter((rating)->{
+        return allRatings.stream().filter((rating)->{
             for(Rating rate:sameMovieRatings){
                 if(rating.getUser()==rate.getUser()) return true;
             }
             return false;
         }).collect(Collectors.toList());
-
-        //Do either a highAverageRecommendation or weighted recommendation. For now highAverageRecommendation:...
-        return highAverageRecommendations(similarUsersRatings,ownRatings);
     }
 
     private boolean badAllRatingsParameter(List<Rating> allRatings){
