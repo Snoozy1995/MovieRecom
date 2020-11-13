@@ -3,13 +3,13 @@ Regarding exception handling: The IO exceptions that needs to be handled in term
 
 Regarding recommendations: Whats the supposed difference between the highAverageRecommendations and the weightedRecommendations in the example code? Im done with the highAverageRecommendations and it passes the test so im assuming its correct, however im unsure what exactly the weightedRecommendations is supposed to do?
 
-Regarding recommendations: In terms of the more "sophisticated" approach, My current code filters down the ratings accordingly:
--> Start with all ratings
--> Retrieve all ratings from movies that you(the logged in user) also rated yourself.
--> Analyze these ratings, save a sort of similarity factor for each user.
--> Retrieve all ratings from the users that did the ratings from prior step.
--> Process the ratings using the similarity factors.
--> Do either a highAverageRecommendation/weightedRecommendations of those ratings (Movies that you rated yourself will be removed from the list in this method, thus only new movies).
-Would this be considered equivalent to the sophisticated approach detailed in the assignment and an acceptable final approach?
+Regarding recommendations: My current code filters down the ratings accordingly:
+1. Start with all ratings
+2. Filter all ratings from movies that you(logged in user) also rated yourself.
+3. Analyze these ratings, storing a similarity factor for each user.
+4. Using all ratings again: Filter ratings from the users that did the ratings from step 2.
+6. Process the ratings applying the similarity factors for each user.
+7. Do a highAverageRecommendation of the ratings. (counting of ratings per movie, sorting, removes movies that you(logged in user) rated)
+My question is: Would this be considered equivalent to approach C described in the assignment and an acceptable final approach?
 
 Regarding JDBC: Ive gone ahead and implemented JDBC support for my DAL objects, so it supports both file persistent storage and SQL databases. Say I want to have a config file for optionally switching between them or something like that, what would be the right approach in regards to the 3 layer architecture, anything to keep in mind?
