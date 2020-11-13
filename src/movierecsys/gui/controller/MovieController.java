@@ -48,7 +48,6 @@ public class MovieController implements Initializable {
         recommendedList.setAll(movieManager.toListString(recommendedMovies.subList(0,24))); //Top 25
         watchedList.setAll(movieManager.toListStringRating(ownRatings));
 
-        //recommendedList.setAll(movieManager.toListString(movieRecommender.getSimilarRecommendations(movieManager.getAllRatings(), movieManager.getRatingsByUser(LoginManager.getLoggedInUser()))));
         txtMovieSearch.textProperty().addListener((obs, oldText, newText) -> moviesList.setAll(movieManager.toListString(movieManager.searchMovie(newText))));
     }
 }
