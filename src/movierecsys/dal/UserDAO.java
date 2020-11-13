@@ -40,20 +40,19 @@ public class UserDAO {
      * Reads a movie from a , s
      *
      * @param t represents the line string.
-     * @return Movie class object
+     * @return User class object
      * @throws NumberFormatException Can be tossed due to invalid ID int.
      */
     private static User stringArrayToUser(String t) {
         String[] arrUser = t.split(",");
 
-        int id = Integer.parseInt(arrUser[0]);
         String name = arrUser[1];
         if (arrUser.length > 2) {
             for (int i = 2; i < arrUser.length; i++) {
                 name += "," + arrUser[i];
             }
         }
-        return new User(id,name);
+        return new User(Integer.parseInt(arrUser[0]),name);
     }
     
     /**

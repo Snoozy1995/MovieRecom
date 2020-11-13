@@ -22,14 +22,12 @@ public class FileDAO {
     public static List<String> readFileToList(String source){
         List<String> array = new ArrayList<>();
         File file = new File(source);
-
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                array.add(line);
-            }
+            while ((line = reader.readLine()) != null) { array.add(line); }
         }catch(Exception e){
-            //todo handle
+            System.out.println("["+source+"]");
+            System.out.println("[FileDAO] Problem reading from persistent storage.");
         }
         return array;
     }

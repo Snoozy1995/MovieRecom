@@ -74,19 +74,14 @@ public class RatingDAO {
      * Reads a movie from a , s
      *
      * @param t represents the line string.
-     * @return Movie class object
+     * @return Rating class object
      * @throws NumberFormatException Due to invalid parseInts.
      */
     private static Rating stringArrayToRating(String t) {
         String[] arrMovie = t.split(",");
-        int movieId = Integer.parseInt(arrMovie[0]);
-        Movie movie=MovieDAO.getAllMovies().stream().filter(a -> a.getId() == movieId).collect(Collectors.toList()).get(0);
-        //...
-        int userId = Integer.parseInt(arrMovie[1]);
-        User user=UserDAO.getAllUsers().stream().filter(a -> a.getId() == userId).collect(Collectors.toList()).get(0);
-        //...
-        int rating = Integer.parseInt(arrMovie[2]);
-        return new Rating(movie,user,rating);
+        Movie movie=MovieDAO.getAllMovies().stream().filter(a -> a.getId() == Integer.parseInt(arrMovie[0])).collect(Collectors.toList()).get(0);
+        User user=UserDAO.getAllUsers().stream().filter(a -> a.getId() == Integer.parseInt(arrMovie[1])).collect(Collectors.toList()).get(0);
+        return new Rating(movie,user,Integer.parseInt(arrMovie[2]));
     }
     
     /**
