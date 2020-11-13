@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import movierecsys.be.Movie;
-import movierecsys.be.Rating;
 import movierecsys.be.User;
 
 /**
