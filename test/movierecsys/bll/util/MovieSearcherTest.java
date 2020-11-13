@@ -27,7 +27,7 @@ public class MovieSearcherTest
      * Test of search method, of class MovieSearcher.
      */
     @Test
-    public void testSearch() throws IOException { // fix ioexception in search to remove ioexception here @todo
+    public void testSearch() {
         System.out.println("search");
         List<Movie> searchBase = new ArrayList<>();
         Movie expectedResult = new Movie(1,1994, "Shawshank Redemption");

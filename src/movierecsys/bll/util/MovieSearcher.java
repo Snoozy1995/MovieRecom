@@ -15,6 +15,6 @@ import movierecsys.be.Movie;
  */
 public class MovieSearcher {
     public List<Movie> search(List<Movie> searchBase, String query) {
-        return searchBase.stream().filter((movie) ->(movie.getTitle().toLowerCase().trim().replaceAll("\\s+", "").indexOf(query.toLowerCase().trim().replaceAll("\\s+", "")) >= 0)).collect(Collectors.toList());
+        return searchBase.stream().filter((movie) ->(movie.getTitle().toLowerCase().trim().replaceAll("\\s+", "").contains(query.toLowerCase().trim().replaceAll("\\s+", "")))).collect(Collectors.toList());
     }
 }

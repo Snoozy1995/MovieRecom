@@ -1,4 +1,4 @@
 package movierecsys.dal;
 
-public class FileReader {
+public class FileDAO {
 }

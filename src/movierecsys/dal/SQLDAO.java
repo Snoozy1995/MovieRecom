@@ -1,4 +1,5 @@
 package movierecsys.dal;
 
-public class SQLReader {
+public class SQLDAO {
+
 }
