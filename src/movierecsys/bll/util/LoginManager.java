@@ -5,12 +5,13 @@ import movierecsys.be.User;
 public class LoginManager {
     private static User loggedIn=null;
 
-    public static void loginUser(User user){
+    public static void login(User user){
         loggedIn=user;
     }
     public static void logout(){
         loggedIn=null;
     }
+
     public static boolean isLoggedIn(){
         return (loggedIn!=null);
     }
