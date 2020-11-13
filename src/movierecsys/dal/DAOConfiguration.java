@@ -1,5 +1,7 @@
 package movierecsys.dal;
 
+//TODO conversionManager for converting between file and sql if wanted.
+
 public class DAOConfiguration {
     static boolean useSQL=false;
     static String SQL_HOST;

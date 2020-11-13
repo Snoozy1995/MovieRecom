@@ -1,6 +1,7 @@
 package movierecsys.dal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,8 @@ public class RatingDAO {
     private static final String FILE_SOURCE = "data/ratings.txt";
     private static String SQL_SOURCE="ratings";
     public static List<Rating> ratingsInMemory=null;
+    public static HashMap<User,List<Rating>> userListHashMap=new HashMap<>();
+    public static HashMap<Movie,List<Rating>> movieListHashMap=new HashMap<>();
     /**
      * Persists the given rating.
      * @param rating the rating to persist.
@@ -61,7 +64,7 @@ public class RatingDAO {
      */
     public static List<Rating> getAllRatings() {
         if(ratingsInMemory!=null) return ratingsInMemory;
-        List<String> array;
+        List<String> array=new ArrayList<>();
         if(!DAOConfiguration.useSQL) {
             array = FileDAO.readFileToList(FILE_SOURCE);
         }else{
@@ -88,9 +91,18 @@ public class RatingDAO {
      */
     private static Rating stringArrayToRating(String t) {
         String[] arrMovie = t.split(",");
-        Movie movie=MovieDAO.getAllMovies().stream().filter(a -> a.getId() == Integer.parseInt(arrMovie[0])).collect(Collectors.toList()).get(0);
-        User user=UserDAO.getAllUsers().stream().filter(a -> a.getId() == Integer.parseInt(arrMovie[1])).collect(Collectors.toList()).get(0);
-        return new Rating(movie,user,Integer.parseInt(arrMovie[2]));
+        Movie movie=MovieDAO.moviesHashMap.get(Integer.parseInt(arrMovie[0]));
+        User user=UserDAO.usersHashMap.get(Integer.parseInt(arrMovie[1]));
+        Rating rating=new Rating(movie,user,Integer.parseInt(arrMovie[2]));
+        if(movieListHashMap.get(movie)==null){
+            movieListHashMap.put(movie,new ArrayList<>());
+        }
+        if(userListHashMap.get(user)==null){
+            userListHashMap.put(user,new ArrayList<>());
+        }
+        movieListHashMap.get(movie).add(rating);
+        userListHashMap.get(user).add(rating);
+        return rating;
     }
     
     /**
@@ -99,7 +111,7 @@ public class RatingDAO {
      * @return The list of ratings.
      */
     public static List<Rating> getRatings(User user){
-        return getAllRatings().stream().filter(a -> a.getUser() == user).collect(Collectors.toList());
+        return getAllRatings().parallelStream().filter(a -> a.getUser() == user).collect(Collectors.toList());
     }
 
     private static void saveStorage(){

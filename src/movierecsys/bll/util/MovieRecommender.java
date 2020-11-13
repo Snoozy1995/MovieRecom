@@ -2,10 +2,12 @@ package movierecsys.bll.util;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import movierecsys.be.Movie;
 import movierecsys.be.Rating;
 import movierecsys.be.User;
+import movierecsys.dal.RatingDAO;
 
 /**
  *
@@ -98,51 +100,74 @@ public class MovieRecommender
      * @return Sorted list of movies recommended to the caller. Sorted in descending order.
      */
     public List<Movie> getSimilarRecommendations(List<Rating> allRatings, List<Rating> ownRatings){
-        //Do either a highAverageRecommendation or weighted recommendation. For now highAverageRecommendation:...
-        return processRecommendationsDefault(allRatings,ownRatings);
-    }
-
-    private List<Movie> processRecommendationsDefault(List<Rating> allRatings,List<Rating> ownRatings){
         if(badAllRatingsParameter(allRatings)) return null;
         //Retrieve all ratings from movies that also you rated yourself...
-        List<Rating> sameMovieRatings=allRatings.stream().filter((rating)->{
+        System.out.println("Step 1 ownRatings size:"+ownRatings.size());
+        /*List<Rating> sameMovieRatings=new ArrayList<>();
+        for(Rating rate:ownRatings){
+            List<Rating> rates= RatingDAO.movieListHashMap.get(rate.getMovie());
+            rates.remove(rate);
+            sameMovieRatings.addAll(rates);
+        }*/
+        List<Rating> sameMovieRatings=allRatings.parallelStream().filter((rating)->{
             for(Rating rate:ownRatings){
                 if(rating==rate) return false; // If rating same as rate then dont include.
+                int similarityBias=15; //When shouldnt we trust a person.
+                if(rating.getRating()*rate.getRating()<similarityBias) return false; //@todo maybe remove, but for now keep. removes any bad similarity rating.
                 if(rating.getMovie()==rate.getMovie()) return true; //If same movie then include.
             }
             return false; // Dont include.
         }).collect(Collectors.toList());
 
-        //Calculate similarity factor
         HashMap<User,Integer> similarityMap= new HashMap<>();
         HashMap<User,Integer> similarityMapValue=new HashMap<>();
         HashMap<User,Integer> similarityMapCounter=new HashMap<>();
-        for(Rating rate:allRatings){
+        System.out.println("Step 2");
+        //Getting values and the counts for each user to be averaged in next for loop...
+        for(Rating rate:sameMovieRatings){
             for(Rating ownRate:ownRatings){
-                similarityMapValue.merge(rate.getUser(), ownRate.getRating()*rate.getRating(), Integer::sum);
-                similarityMapCounter.merge(rate.getUser(),1,Integer::sum);
+                if(rate.getMovie()==ownRate.getMovie()){
+                    similarityMapValue.merge(rate.getUser(), ownRate.getRating()*rate.getRating(), Integer::sum);
+                    similarityMapCounter.merge(rate.getUser(),1,Integer::sum);
+                }
             }
         }
-
+        System.out.println("Step 3");
+        //Averaging for the similarity factor:
         for (Map.Entry<User,Integer> me : similarityMapValue.entrySet()) {
             similarityMap.put(me.getKey(), me.getValue()/similarityMapCounter.get(me.getKey()));
         }
-
+        System.out.println("Step 4 sameMovieRatings:"+sameMovieRatings.size());
         //Retrieve all ratings from the users that did those ratings and excludeFromRatingIfSameMovie:
-        List<Rating> userRatings=excludeFromRatingIfSameMovie(allRatings.stream().filter((rating)->{
+        //RatingDAO.userListHashMap();
+        /*List<Rating> userRatings=new ArrayList<>();
+        for(Rating ratex:sameMovieRatings){
+            userRatings.addAll(RatingDAO.userListHashMap.get(ratex.getUser()));
+        }*/
+
+        List<Rating> userRatings=allRatings.parallelStream().filter((rating)->{
+            for(Rating rate:sameMovieRatings){
+                if(rating.getRating()<0) return false;
+                if(rating.getUser()==rate.getUser()) return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+
+        /*List<Rating> userRatings=excludeFromRatingIfSameMovie(allRatings.parallelStream().filter((rating)->{
             for(Rating rate:sameMovieRatings){
                 if(rating.getUser()==rate.getUser()) return true;
             }
             return false;
-        }).collect(Collectors.toList()),ownRatings);
+        }).collect(Collectors.toList()),ownRatings);*/
 
-
-        HashMap<Movie,Integer> moviesHashMap=new HashMap<>();
-
+        System.out.println("Step 5 userRating size:"+userRatings.size());
         //Applying similarityFactor to values to be sorted.
+        HashMap<Movie,Integer> moviesHashMap=new HashMap<>();
         for(Rating userRating: userRatings){
             moviesHashMap.merge(userRating.getMovie(),userRating.getRating()*similarityMap.get(userRating.getUser()),Integer::sum);
         }
+
+        System.out.println("Step 6");
         // Sorts and returns List<Movie> accordingly.
         return new ArrayList<>(sortHashMap(moviesHashMap).keySet());
     }
@@ -154,7 +179,7 @@ public class MovieRecommender
     private List<Rating> excludeFromRatingIfSameMovie(List<Rating> allRatings, List<Rating> excludeRatings){
         if(excludeRatings==null||excludeRatings.size()==0) return allRatings;
         //Sorting -- remove videos already rated...
-        return allRatings.stream().filter((rating)->{
+        return allRatings.parallelStream().filter((rating)->{
             for(Rating rate:excludeRatings){
                 if(rating.getMovie()==rate.getMovie()) return false;
             }

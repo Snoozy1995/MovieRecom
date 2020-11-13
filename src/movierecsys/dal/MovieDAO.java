@@ -1,6 +1,7 @@
 package movierecsys.dal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ public class MovieDAO {
     private static final String FILE_SOURCE = "data/movie_titles.txt";
     private static String SQL_SOURCE;
     public static List<Movie> moviesInMemory=null;
+    public static HashMap<Integer,Movie> moviesHashMap=new HashMap<>();
 
     /**
      * Gets a list of all movies in the persistence storage.
@@ -30,7 +32,9 @@ public class MovieDAO {
         List<Movie> allMovies= new ArrayList<>();
         for(String line: array){
             try {
-                allMovies.add(stringArrayToMovie(line));
+                Movie movie=stringArrayToMovie(line);
+                moviesHashMap.put(movie.getId(),movie);
+                allMovies.add(movie);
             } catch (Exception ex) {
                 System.out.println("["+line+"]\nCould not resolve string line to movie object, moving on to next line...");
             }

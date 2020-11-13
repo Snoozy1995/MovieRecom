@@ -1,6 +1,7 @@
 package movierecsys.dal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ public class UserDAO {
     private static final String FILE_SOURCE = "data/users.txt";
     private static String SQL_SOURCE;
     public static List<User> usersInMemory=null;
+    public static HashMap<Integer,User> usersHashMap=new HashMap<>();
     /**
      * Gets a list of all known users.
      * @return List of users.
@@ -30,7 +32,9 @@ public class UserDAO {
         List<User> allUsers = new ArrayList<>();
         for(String line: array){
             try {
-                allUsers.add(stringArrayToUser(line));
+                User user=stringArrayToUser(line);
+                usersHashMap.put(user.getId(),user);
+                allUsers.add(user);
             } catch (Exception ex) {
                 System.out.println("["+line+"]\nCould not resolve string line to user object, moving on to next line...");
             }

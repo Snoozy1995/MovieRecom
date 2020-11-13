@@ -1,9 +1,10 @@
 package movierecsys.bll.util;
 
 import movierecsys.be.Movie;
+import movierecsys.be.Rating;
+import movierecsys.be.User;
 import movierecsys.dal.MovieDAO;
 import movierecsys.dal.RatingDAO;
-import movierecsys.dal.UserDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,14 @@ public class MovieManager {
 
     public MovieManager(){
         MovieDAO.getAllMovies();
-        UserDAO.getAllUsers();
-        RatingDAO.getAllRatings();
+    }
+
+    public List<Rating> getAllRatings(){
+        return RatingDAO.getAllRatings();
+    }
+
+    public List<Rating> getRatingsByUser(User user){
+        return RatingDAO.getRatings(user);
     }
 
     public List<Movie> searchMovie(String query){
