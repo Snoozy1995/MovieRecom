@@ -5,7 +5,7 @@ Regarding recommendations: Whats the supposed difference between the highAverage
 
 Regarding recommendations: In terms of the more "sophisticated" approach, My current code filters down the ratings accordingly:
 -> Start with all ratings
--> Retrieve ratings from movies that also you (the logged in user) rated yourself.
+-> Retrieve all ratings from movies that you(the logged in user) also rated yourself.
 -> Retrieve ratings from the users that did the ratings from prior step.
 -> Do either a highAverageRecommendation/weightedRecommendations of those ratings (Movies that you rated yourself will be removed from the list in this method, thus only new movies).
 Would this be considered equivalent to the sophisticated approach detailed in the assignment and an acceptable final approach?
