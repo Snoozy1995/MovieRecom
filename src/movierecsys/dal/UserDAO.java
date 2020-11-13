@@ -41,7 +41,7 @@ public class UserDAO {
      *
      * @param t represents the line string.
      * @return Movie class object
-     * @throws NumberFormatException
+     * @throws NumberFormatException Can be tossed due to invalid ID int.
      */
     private static User stringArrayToUser(String t) {
         String[] arrUser = t.split(",");
@@ -53,8 +53,7 @@ public class UserDAO {
                 name += "," + arrUser[i];
             }
         }
-        User user = new User(id,name);
-        return user;
+        return new User(id,name);
     }
     
     /**

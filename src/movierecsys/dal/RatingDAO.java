@@ -41,7 +41,7 @@ public class RatingDAO {
     
     /**
      * Removes the given rating.
-     * @param rating 
+     * @param rating The rating to be deleted.
      */
     public void deleteRating(Rating rating){
         ratingsInMemory.remove(rating);
@@ -75,7 +75,7 @@ public class RatingDAO {
      *
      * @param t represents the line string.
      * @return Movie class object
-     * @throws NumberFormatException
+     * @throws NumberFormatException Due to invalid parseInts.
      */
     private static Rating stringArrayToRating(String t) {
         String[] arrMovie = t.split(",");

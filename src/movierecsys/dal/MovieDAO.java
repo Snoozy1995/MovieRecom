@@ -42,7 +42,7 @@ public class MovieDAO {
      *
      * @param t represents the line string.
      * @return Movie class object
-     * @throws NumberFormatException
+     * @throws NumberFormatException Due to invalid parseInts.
      */
     private static Movie stringArrayToMovie(String t) {
         String[] arrMovie = t.split(",");
@@ -55,8 +55,7 @@ public class MovieDAO {
                 title += "," + arrMovie[i];
             }
         }
-        Movie mov = new Movie(id, year, title);
-        return mov;
+        return new Movie(id, year, title);
     }
 
     /**
@@ -125,7 +124,7 @@ public class MovieDAO {
      * Saves the persistent storage for the movies.
      */
     private static void saveStorage(){
-        List<String> out=new ArrayList<String>();
+        List<String> out=new ArrayList<>();
         for(Movie movie:moviesInMemory){
             out.add(movie.getId()+","+movie.getYear()+","+movie.getTitle());
         }
