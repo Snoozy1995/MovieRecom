@@ -12,7 +12,7 @@ import movierecsys.be.Movie;
  */
 public class MovieDAO {
     private static final String FILE_SOURCE = "data/movie_titles.txt";
-    private static String SQL_SOURCE;
+    private static final String SQL_SOURCE="movies";
     public static List<Movie> moviesInMemory=null;
     public static HashMap<Integer,Movie> moviesHashMap=new HashMap<>();
 
@@ -27,7 +27,7 @@ public class MovieDAO {
         if(!DAOConfiguration.useSQL) {
             array = FileDAO.readFileToList(FILE_SOURCE);
         }else{
-            array=SQLDAO.selectToStringList("movies","id,releaseYear,title");
+            array=SQLDAO.selectToStringList(SQL_SOURCE,"id,releaseYear,title");
         }
         List<Movie> allMovies= new ArrayList<>();
         for(String line: array){
@@ -53,14 +53,14 @@ public class MovieDAO {
     private static Movie stringArrayToMovie(String t) {
         String[] arrMovie = t.split(",");
         int year=0;
-        try{ year=Integer.parseInt(arrMovie[1]); }catch(Exception e){}
-        String title = arrMovie[2];
+        if(!arrMovie[1].equals("NULL")){ year=Integer.parseInt(arrMovie[1]); }
+        StringBuilder title = new StringBuilder(arrMovie[2]);
         if (arrMovie.length > 3) {
             for (int i = 3; i < arrMovie.length; i++) {
-                title += "," + arrMovie[i];
+                title.append(",").append(arrMovie[i]);
             }
         }
-        return new Movie(Integer.parseInt(arrMovie[0]),year,title);
+        return new Movie(Integer.parseInt(arrMovie[0]),year, title.toString());
     }
 
     /**
@@ -76,7 +76,7 @@ public class MovieDAO {
         if(!DAOConfiguration.useSQL){
             FileDAO.appendLineToFile(FILE_SOURCE,id+","+releaseYear+","+title);
         }else{
-            SQLDAO.insertToTable("movies","id,releaseYear,title",id+","+releaseYear+","+title);
+            SQLDAO.insertToTable(SQL_SOURCE,"id,releaseYear,title",id+","+releaseYear+","+title);
         }
 
         Movie movie=new Movie(id, releaseYear, title);
@@ -92,7 +92,7 @@ public class MovieDAO {
     private static void deleteMovie(Movie movie) {
         moviesInMemory.remove(movie);
         if(!DAOConfiguration.useSQL) saveStorage();
-        else SQLDAO.deleteFromTable("movies","id="+movie.getId());
+        else SQLDAO.deleteFromTable(SQL_SOURCE,"id="+movie.getId());
     }
 
     /**
@@ -104,7 +104,7 @@ public class MovieDAO {
     private static void updateMovie(Movie movie) {
         if(getMovie(movie.getId())==null){ moviesInMemory.add(movie); }
         if(!DAOConfiguration.useSQL) saveStorage();
-        else SQLDAO.updateToTable("movies","releaseYear="+movie.getYear()+",title="+movie.getTitle(),"id="+movie.getId());
+        else SQLDAO.updateToTable(SQL_SOURCE,"releaseYear="+movie.getYear()+",title="+movie.getTitle(),"id="+movie.getId());
     }
 
     /**

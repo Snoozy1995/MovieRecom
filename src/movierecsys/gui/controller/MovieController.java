@@ -13,7 +13,6 @@ import movierecsys.bll.util.MovieManager;
 import movierecsys.bll.util.MovieRecommender;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -47,7 +46,7 @@ public class MovieController implements Initializable {
         System.out.println("movieRecommender.getSimilarRecommendations()");
         List<Movie> recommendedMovies=movieRecommender.getSimilarRecommendations(allRatings,ownRatings);
         System.out.println("movieManager.toListString()");
-        recommendedList.setAll(movieManager.toListString(recommendedMovies.subList(0,24))); //Top 25
+        recommendedList.setAll(movieManager.toListString(recommendedMovies));
         watchedList.setAll(movieManager.toListStringRating(ownRatings));
 
 

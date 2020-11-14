@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import movierecsys.be.Movie;
 import movierecsys.be.User;
 
 /**
@@ -14,7 +13,7 @@ import movierecsys.be.User;
 //todo remove inmemory? and implement sql also.
 public class UserDAO {
     private static final String FILE_SOURCE = "data/users.txt";
-    private static String SQL_SOURCE;
+    private static final String SQL_SOURCE="users";
     public static List<User> usersInMemory=null;
     public static HashMap<Integer,User> usersHashMap=new HashMap<>();
     /**
@@ -23,13 +22,14 @@ public class UserDAO {
      */
     public static List<User> getAllUsers(){
         if(usersInMemory!=null) return usersInMemory;
-        List<String> array=new ArrayList<>();
+        List<String> array;
         if(!DAOConfiguration.useSQL) {
             array = FileDAO.readFileToList(FILE_SOURCE);
         }else{
-            array = SQLDAO.selectToStringList("users","id,name");
+            array = SQLDAO.selectToStringList(SQL_SOURCE,"id,name");
         }
         List<User> allUsers = new ArrayList<>();
+        assert array != null;
         for(String line: array){
             try {
                 User user=stringArrayToUser(line);
@@ -53,13 +53,13 @@ public class UserDAO {
     private static User stringArrayToUser(String t) {
         String[] arrUser = t.split(",");
 
-        String name = arrUser[1];
+        StringBuilder name = new StringBuilder(arrUser[1]);
         if (arrUser.length > 2) {
             for (int i = 2; i < arrUser.length; i++) {
-                name += "," + arrUser[i];
+                name.append(",").append(arrUser[i]);
             }
         }
-        return new User(Integer.parseInt(arrUser[0]),name);
+        return new User(Integer.parseInt(arrUser[0]), name.toString());
     }
     
     /**
@@ -68,7 +68,15 @@ public class UserDAO {
      * @return The User with the ID.
      */
     public static User getUser(int id){
-        return getAllUsers().stream().filter(a -> a.getId()==id).collect(Collectors.toList()).get(0);
+        List<User> users=getAllUsers().stream().filter(a -> a.getId()==id).collect(Collectors.toList());
+        if(users.size()==0) return null;
+        return users.get(0);
+    }
+
+    public static User getUser(String name){
+        List<User> users=getAllUsers().stream().filter(a -> a.getName().equals(name)).collect(Collectors.toList());
+        if(users.size()==0) return null;
+        return users.get(0);
     }
     
     /**
@@ -83,7 +91,7 @@ public class UserDAO {
             usersInMemory.add(user);
         }
         if(!DAOConfiguration.useSQL) saveStorage();
-        else SQLDAO.updateToTable("users","name="+user.getName(),"id="+user.getId());
+        else SQLDAO.updateToTable(SQL_SOURCE,"name="+user.getName(),"id="+user.getId());
     }
 
     public static User createUser(String name){
@@ -94,7 +102,7 @@ public class UserDAO {
         if(!DAOConfiguration.useSQL){
             FileDAO.appendLineToFile(FILE_SOURCE,id+","+name);
         }else{
-            SQLDAO.insertToTable("users","id,name",id+","+name);
+            SQLDAO.insertToTable(SQL_SOURCE,"id,name",id+","+name);
         }
         User user=new User(id,name);
         usersInMemory.add(user);
@@ -107,7 +115,7 @@ public class UserDAO {
         }
         usersInMemory.remove(user);
         if(!DAOConfiguration.useSQL) saveStorage();
-        else SQLDAO.deleteFromTable("users","id="+user.getId());
+        else SQLDAO.deleteFromTable(SQL_SOURCE,"id="+user.getId());
     }
 
     private static Integer getNewID(){

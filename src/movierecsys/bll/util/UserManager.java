@@ -1,9 +1,6 @@
 package movierecsys.bll.util;
 
-import movierecsys.be.Movie;
 import movierecsys.be.User;
-import movierecsys.dal.MovieDAO;
-import movierecsys.dal.RatingDAO;
 import movierecsys.dal.UserDAO;
 
 import java.util.ArrayList;

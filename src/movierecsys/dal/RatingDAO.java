@@ -3,8 +3,6 @@ package movierecsys.dal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import movierecsys.be.Movie;
@@ -16,7 +14,7 @@ import movierecsys.be.User;
  */
 public class RatingDAO {
     private static final String FILE_SOURCE = "data/ratings.txt";
-    private static String SQL_SOURCE="ratings";
+    private static final String SQL_SOURCE="ratings";
     public static List<Rating> ratingsInMemory=null;
     public static HashMap<User,List<Rating>> userListHashMap=new HashMap<>();
     public static HashMap<Movie,List<Rating>> movieListHashMap=new HashMap<>();
@@ -66,7 +64,7 @@ public class RatingDAO {
      */
     public static List<Rating> getAllRatings() {
         if(ratingsInMemory!=null) return ratingsInMemory;
-        List<String> array=new ArrayList<>();
+        List<String> array;
         if(!DAOConfiguration.useSQL) {
             array = FileDAO.readFileToList(FILE_SOURCE);
         }else{
@@ -98,12 +96,8 @@ public class RatingDAO {
         Movie movie=MovieDAO.moviesHashMap.get(Integer.parseInt(t.substring(0,first)));
         User user=UserDAO.usersHashMap.get(Integer.parseInt(t.substring(first+1,last)));
         Rating rating=new Rating(movie,user,Integer.parseInt(t.substring(last+1)));
-        if(movieListHashMap.get(movie)==null){
-            movieListHashMap.put(movie,new ArrayList<>());
-        }
-        if(userListHashMap.get(user)==null){
-            userListHashMap.put(user,new ArrayList<>());
-        }
+        movieListHashMap.computeIfAbsent(movie, k -> new ArrayList<>());
+        userListHashMap.computeIfAbsent(user, k -> new ArrayList<>());
         movieListHashMap.get(movie).add(rating);
         userListHashMap.get(user).add(rating);
         return rating;

@@ -16,14 +16,14 @@
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
             <TextField fx:id="loginInput" layoutX="23.0" layoutY="119.0" />
-            <Button fx:id="loginButton" defaultButton="true" layoutX="23.0" layoutY="151.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="149.0" text="Create User/Login" />
+            <Button defaultButton="true" layoutX="23.0" layoutY="151.0" mnemonicParsing="false" onAction="#loginButtonAction" prefHeight="25.0" prefWidth="149.0" text="Create User/Login" />
             <Text fill="WHITE" fontSmoothingType="LCD" layoutX="63.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
                <font>
                   <Font name="Calibri" size="32.0" />
                </font>
             </Text>
             <Text fill="#d0d0d0" fontSmoothingType="LCD" layoutX="23.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Double click on a username from the list or type one below to create a new user." wrappingWidth="150.0" />
-            <Button fx:id="closeButton" layoutX="165.0" layoutY="1.0" mnemonicParsing="false" onAction="#closeButtonAction" style="-fx-background-color: transparent;" text="X" textFill="#d3d3d3">
+            <Button layoutX="165.0" layoutY="1.0" mnemonicParsing="false" onAction="#closeButtonAction" style="-fx-background-color: transparent;" text="X" textFill="#d3d3d3">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

@@ -32,6 +32,7 @@ public class SQLDAO {
     }
 
     static List<String> selectToStringList(String source, String selects) {
+        if(!checkConfiguration()) return null;
         List<String> returnList = new ArrayList<>();
         try {
             Class.forName(JDBC_DRIVER);
@@ -43,11 +44,12 @@ public class SQLDAO {
             }
             con.close();
         } catch (Exception e) {
-
+            //todo handle
         }
         return returnList;
     }
     static List<String> selectToStringList(String source, String selects, String additional) {
+        if(!checkConfiguration()) return null;
         List<String> returnList = new ArrayList<>();
         try {
             Class.forName(JDBC_DRIVER);
@@ -59,7 +61,7 @@ public class SQLDAO {
             }
             con.close();
         } catch (Exception e) {
-
+            //todo handle
         }
         return returnList;
     }
@@ -77,6 +79,7 @@ public class SQLDAO {
     }
 
     private static void executeUpdate(String query){
+        if(!checkConfiguration()) return;
         try {
             Class.forName(JDBC_DRIVER);
             Connection con = DriverManager.getConnection("jdbc:mysql://"+DAOConfiguration.SQL_HOST+":"+DAOConfiguration.SQL_PORT+"/"+DAOConfiguration.SQL_DB,DAOConfiguration.SQL_USERNAME,DAOConfiguration.SQL_PASSWORD);
@@ -84,7 +87,7 @@ public class SQLDAO {
             stmt.executeUpdate(query);
             con.close();
         } catch (Exception e) {
-
+            //todo handle
         }
     }
 

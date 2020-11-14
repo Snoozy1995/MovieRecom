@@ -12,6 +12,14 @@ public class LoginManager {
             System.out.println("Logged in as: "+loggedIn.getName());
         }
     }
+    public static void login(String username){
+        //See if user exists...
+        User user=UserDAO.getUser(username);
+        System.out.println(user);
+        if(user==null){ user=UserDAO.createUser(username); }
+        loggedIn=user;
+        System.out.println("Logged in as: "+loggedIn.getName());
+    }
     public static void logout(){
         loggedIn=null;
     }
