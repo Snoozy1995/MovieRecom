@@ -55,12 +55,11 @@ public class LoginController implements Initializable {
     private void loggedInProcessWindow(Stage current_stage){
         if(!LoginManager.isLoggedIn()) return;
         try {
-            Parent root1 = new FXMLLoader(getClass().getResource("../view/MovieView.fxml")).load();
+            Parent root1 = new FXMLLoader(getClass().getResource("../view/Default.fxml")).load();
             current_stage.close();
             Stage stage = new Stage();
             stage.setScene(new Scene(root1));
             stage.setTitle("Movie Recommendation Application");
-            stage.setResizable(false);
             stage.show();
         } catch(Exception e) {
             e.printStackTrace();

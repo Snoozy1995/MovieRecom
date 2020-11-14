@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FileDAO {
 
-    public static void appendLineToFile(String source, String line){
+    protected static void appendLineToFile(String source, String line){
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(source, true));
             writer.write(line+"\n");
@@ -19,7 +19,7 @@ public class FileDAO {
         }
     }
 
-    public static List<String> readFileToList(String source){
+    protected static List<String> readFileToList(String source){
         List<String> array = new ArrayList<>();
         File file = new File(source);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -32,7 +32,7 @@ public class FileDAO {
         return array;
     }
 
-    public static void saveListToFile(String source, List<String> lists){
+    protected static void saveListToFile(String source, List<String> lists){
         try{
             File file = new File(source);
             Files.write(file.toPath(), lists, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);

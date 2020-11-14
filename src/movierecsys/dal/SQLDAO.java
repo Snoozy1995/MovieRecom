@@ -31,7 +31,7 @@ public class SQLDAO {
         return true;
     }
 
-    static List<String> selectToStringList(String source, String selects) {
+    protected static List<String> selectToStringList(String source, String selects) {
         if(!checkConfiguration()) return null;
         List<String> returnList = new ArrayList<>();
         try {
@@ -48,7 +48,7 @@ public class SQLDAO {
         }
         return returnList;
     }
-    static List<String> selectToStringList(String source, String selects, String additional) {
+    protected static List<String> selectToStringList(String source, String selects, String additional) {
         if(!checkConfiguration()) return null;
         List<String> returnList = new ArrayList<>();
         try {
@@ -66,15 +66,15 @@ public class SQLDAO {
         return returnList;
     }
 
-    static void deleteFromTable(String source, String whereCondition){
+    protected static void deleteFromTable(String source, String whereCondition){
         executeUpdate("DELETE FROM "+source+" WHERE "+whereCondition);
     }
 
-    static void updateToTable(String source,String setQuery, String whereCondition){
+    protected static void updateToTable(String source,String setQuery, String whereCondition){
         executeUpdate("UPDATE "+source+" SET "+setQuery+" WHERE "+whereCondition);
     }
 
-    static void insertToTable(String source, String insertColumns, String insertData) {
+    protected static void insertToTable(String source, String insertColumns, String insertData) {
         executeUpdate("INSERT INTO "+source+" ("+insertColumns+") VALUES ("+insertData+")");
     }
 
