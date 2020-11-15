@@ -113,7 +113,7 @@ public class MovieDAO {
      * @param id ID of the movie.
      * @return A Movie object.
      */
-    private static Movie getMovie(int id) {
+    public static Movie getMovie(int id) {
         return getAllMovies().stream().filter(a -> a.getId() == id).collect(Collectors.toList()).get(0);
     }
 

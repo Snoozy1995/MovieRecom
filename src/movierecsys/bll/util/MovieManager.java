@@ -20,6 +20,10 @@ public class MovieManager {
         return RatingDAO.getAllRatings();
     }
 
+    public Movie getMovie(int id){
+        return MovieDAO.getMovie(id);
+    }
+
     public List<Rating> getRatingsByUser(User user){
         return RatingDAO.getRatings(user);
     }
@@ -39,7 +43,7 @@ public class MovieManager {
     public List<String> toListStringRating(List<Rating> ratingsList){
         List<String> moviesString=new ArrayList<>();
         for(Rating rating:ratingsList){
-            moviesString.add("["+rating.getRating()+"] "+rating.getMovie().getTitle());
+            moviesString.add("["+rating.getMovie().getId()+"] "+rating.getMovie().getTitle()+" Rating:"+rating.getRating());
         }
         return moviesString;
     }
