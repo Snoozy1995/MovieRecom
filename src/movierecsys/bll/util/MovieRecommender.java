@@ -72,24 +72,9 @@ public class MovieRecommender
      */
     public List<Movie> weightedRecommendations(List<Rating> allRatings, List<Rating> excludeRatings)
     {
-        //if(badAllRatingsParameter(allRatings)) return null;
-        //allRatings=excludeFromRatingIfSameMovie(allRatings,excludeRatings);
-/*
-        //Using a hashmap and java stream -> count and sort ratings...
-        Map<Movie,Integer> mapOfObjects = new HashMap<>();
-        for(Rating rate:allRatings){
-            mapOfObjects.merge(rate.getMovie(), rate.getRating(), Integer::sum);
-        }
-        Map<Movie,Integer> sortedMap=mapOfObjects.entrySet().stream()
-                .sorted(Map.Entry.<Movie,Integer>comparingByValue().reversed())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (e1, e2) -> e1, LinkedHashMap::new));*/
-
-        //return new ArrayList<>(sortedMap.keySet());
         //TODO Weighted recommender
         return null;
     }
-
 
     /**
      * Returns a list of movie recommendations based on two factors: Looking at movies rated yourself and taking other users similar into account:

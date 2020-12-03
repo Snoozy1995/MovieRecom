@@ -1,1 +1,10 @@
+Regarding recommendations: My current code filters down the ratings accordingly:
+1. Start with all ratings
+2. Filter all ratings from movies that you(logged in user) also rated yourself.
+3. Analyze these ratings, storing a similarity factor for each user.
+4. Using all ratings again: Filter ratings from the users that did the ratings from step 2.
+6. Process the ratings applying the similarity factors for each user.
+7. Do a "highAverageRecommendation" of the ratings. (counting of ratings per movie, sorting, removes movies that you(logged in user) rated)
+My question is: Would this be considered equivalent to approach C described in the assignment and an acceptable final approach?
+
 Regarding JDBC: Ive gone ahead and implemented JDBC support for my DAL objects, so it supports both file persistent storage and SQL databases. Say I want to have a config file for optionally switching between them or something like that, what would be the right approach in regards to the 3 layer architecture, anything to keep in mind?
