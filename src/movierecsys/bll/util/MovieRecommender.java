@@ -90,7 +90,7 @@ public class MovieRecommender
         List<Rating> sameMovieRatings=allRatings.parallelStream().filter((rating)->{
             if(rating.getRating()==0) return false;
             for(Rating rate:ownRatings){
-                int similarityBias=5; //When shouldnt we trust a person.
+                int similarityBias=5; //When shouldnt we trust a person. This number seems a bit arbitrary, it doesnt actual equal 5, not sure lol
                 if(rating==rate) return false; // If rating same as rate then dont include.
                 else if(rating.getRating()*rate.getRating()<similarityBias) return false; //@todo maybe remove, but for now keep. removes any bad similarity rating.
                 else if(rating.getMovie().getId()==rate.getMovie().getId()) return true; //If same movie, include.
