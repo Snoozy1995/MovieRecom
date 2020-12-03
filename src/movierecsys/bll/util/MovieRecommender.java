@@ -117,8 +117,7 @@ public class MovieRecommender
         //Averaging for the similarity factor:
         for (Map.Entry<User,Integer> me : similarityMapValue.entrySet()) {
             similarityMap.put(me.getKey(), me.getValue()/similarityMapCounter.get(me.getKey()));
-
-            userRatings.addAll(excludeFromRatingIfSameMovie(RatingDAO.userListHashMap.get(me.getKey()),ownRatings));
+            userRatings.addAll(excludeFromRatingIfSameMovie(RatingDAO.userListHashMap.get(me.getKey()),ownRatings)); //Note: excludeFromRatingIfSameMovie happens here, so any movie that's already been rated by the ownRatings, wont be included
         }
 
         System.out.println("Step 4 userRating size:"+userRatings.size());
