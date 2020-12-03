@@ -24,6 +24,10 @@ public class MovieManager {
         return MovieDAO.getMovie(id);
     }
 
+    public void deleteMovie(Movie movie){
+        MovieDAO.deleteMovie(movie);
+    }
+
     public List<Rating> getRatingsByUser(User user){
         return RatingDAO.getRatings(user);
     }

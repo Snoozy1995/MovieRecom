@@ -89,7 +89,7 @@ public class MovieDAO {
      *
      * @param movie The movie to delete.
      */
-    private static void deleteMovie(Movie movie) {
+    public static void deleteMovie(Movie movie) {
         moviesInMemory.remove(movie);
         if(!DAOConfiguration.useSQL) saveStorage();
         else SQLDAO.deleteFromTable(SQL_SOURCE,"id="+movie.getId());

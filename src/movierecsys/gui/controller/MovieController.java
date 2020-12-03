@@ -75,6 +75,7 @@ public class MovieController implements Initializable {
         long difference = endTime - startTime;
         System.out.println("Elapsed time in milliseconds: " + difference);
         txtMovieSearch.textProperty().addListener((obs, oldText, newText) -> moviesList.setAll(movieManager.toListString(movieManager.searchMovie(newText))));
+        moviesList.setAll(movieManager.toListString(movieManager.searchMovie("")));
     }
 
     private void selectMovie(MouseEvent click,ListView<String> lst) {
@@ -86,7 +87,7 @@ public class MovieController implements Initializable {
     @FXML
     private void onDeleteMovie(ActionEvent e){
         if(currentMovie==null) return;
-        //@todo delete movie
+        movieManager.deleteMovie(currentMovie);
     }
 
     void selectMovie(Movie movie){

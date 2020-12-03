@@ -102,12 +102,6 @@ public class MovieRecommender
         if(badAllRatingsParameter(allRatings)) return null;
         //Retrieve all ratings from movies that also you rated yourself...
         System.out.println("Step 1 ownRatings size:"+ownRatings.size());
-        /*List<Rating> sameMovieRatings=new ArrayList<>();
-        for(Rating rate:ownRatings){
-            List<Rating> rates= RatingDAO.movieListHashMap.get(rate.getMovie());
-            rates.remove(rate);
-            sameMovieRatings.addAll(rates);
-        }*/
         List<Rating> sameMovieRatings=allRatings.parallelStream().filter((rating)->{
             if(rating.getRating()==0) return false;
             for(Rating rate:ownRatings){
@@ -133,9 +127,8 @@ public class MovieRecommender
             }
         }
 
-        System.out.println("Step 3");
+        System.out.println("Step 3 similarityFactorAveraging");
         List<Rating> userRatings=new ArrayList<>();
-
         //Averaging for the similarity factor:
         for (Map.Entry<User,Integer> me : similarityMapValue.entrySet()) {
             similarityMap.put(me.getKey(), me.getValue()/similarityMapCounter.get(me.getKey()));
